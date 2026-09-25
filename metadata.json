@@ -1,0 +1,8 @@
+{
+  "name": "PyroWatch Valle - Monitoreo de Incendios Forestales Cali & Valle del Cauca",
+  "description": "Plataforma de detección temprana y verificación de incendios de cobertura vegetal en Cali y el Valle del Cauca con satélites NASA FIRMS, red de sensores IoT terrestres, inferencia con OpenRouter y servidor WebSocket en tiempo real para integración con aplicaciones externas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
