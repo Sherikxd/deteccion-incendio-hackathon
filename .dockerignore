@@ -1,6 +1,8 @@
 # Dependencias y artefactos de build (se instalan/crean dentro de la imagen)
 node_modules
 dist
+build-server
+.npm-cache
 server.js
 
 # Seguridad: nunca enviar secretos al contexto de build

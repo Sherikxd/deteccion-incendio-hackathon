@@ -1,6 +1,8 @@
 node_modules/
 build/
 dist/
+build-server/
+.npm-cache/
 coverage/
 .DS_Store
 *.log

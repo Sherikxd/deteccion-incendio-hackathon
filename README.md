@@ -12,6 +12,8 @@ PyroWatch Valle es una plataforma que combina telemetría satelital (NASA FIRMS/
 - **Sandbox de simulación** con escenarios de incendio de prueba.
 - **Panel web** con mapa interactivo, cámaras térmicas, simulador de propagación (Rothermel) y despacho por WhatsApp.
 
+> Alcance de esta entrega: la demo deja funcional el flujo local de alertas, telemetría, SSE/WebSocket y simulación. WhatsApp e IA externa permanecen en modo opcional/simulado hasta configurar proveedores reales.
+
 ## 🚀 Inicio rápido
 
 **Requisitos:** Node.js 20.19+ o 22+
@@ -38,4 +40,5 @@ Esta es solo una presentación breve del proyecto. **La documentación completa 
 | [01 - Cómo funciona](docs/01-COMO-FUNCIONA.md) | Flujo de satélites, sensores IoT y cámaras térmicas. |
 | [02 - Arquitectura](docs/02-ARQUITECTURA.md) | Diagrama de bloques y capas del backend. |
 | [03 - Integración web](docs/03-INTEGRACION-WEB.md) | Código listo para React, ESP32/Arduino, Python y WhatsApp. |
+| [05 - Operación segura](docs/05-OPERACION-SEGURA.md) | Límites, simulación, estado de WhatsApp e IA externa. |
 | [04 - Referencia de la API](docs/04-API-REFERENCE.md) | Todos los endpoints REST, SSE y WebSocket. |

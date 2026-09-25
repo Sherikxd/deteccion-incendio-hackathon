@@ -37,7 +37,7 @@ export const WhatsAppBotDispatcher: React.FC = () => {
           ? '+57 315 222 1119 (Oficiales de Guardia)'
           : '+57 318 555 4321 (Líderes Comunitarios)',
       timestamp: 'Ahora mismo',
-      status: 'DELIVERED',
+      status: 'SIMULATED',
       alertId: `ALR-CALI-2026-${Math.floor(Math.random() * 900 + 100)}`,
       sector: customSector,
       riskLevel: customRisk,
@@ -49,14 +49,19 @@ export const WhatsAppBotDispatcher: React.FC = () => {
     };
 
     try {
-      await fetch('/api/whatsapp/dispatch', {
+      const response = await fetch('/api/whatsapp/dispatch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMsg)
       });
+      const result = await response.json();
+      const persistedMessage: WhatsAppDispatchMessage = {
+        ...newMsg,
+        status: result.status === 'DELIVERED' ? 'DELIVERED' : 'SIMULATED'
+      };
 
-      setMessages((prev) => [newMsg, ...prev]);
-      setToastMessage(`¡Mensaje de WhatsApp despachado a ${selectedGroup}!`);
+      setMessages((prev) => [persistedMessage, ...prev]);
+      setToastMessage(result.message || `Despacho simulado para ${selectedGroup}.`);
       setTimeout(() => setToastMessage(null), 3500);
     } catch (e) {
       console.error(e);

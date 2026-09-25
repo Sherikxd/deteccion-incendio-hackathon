@@ -141,7 +141,7 @@ export interface WhatsAppDispatchMessage {
   recipientGroup: string;
   recipientPhone: string;
   timestamp: string;
-  status: 'SENT' | 'DELIVERED' | 'READ';
+  status: 'SENT' | 'DELIVERED' | 'READ' | 'SIMULATED';
   alertId: string;
   sector: string;
   riskLevel: 'CRITICAL' | 'HIGH' | 'MODERATE';

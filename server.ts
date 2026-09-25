@@ -13,8 +13,51 @@ const __dirname = path.dirname(__filename);
 const OPENROUTER_API_KEY =
   process.env.OPENROUTER_API_KEY;
 
+const ALLOWED_AI_MODELS = new Set([
+  'anthropic/claude-3.5-sonnet',
+  'google/gemini-2.0-flash-001',
+  'openai/gpt-4o',
+  'meta-llama/llama-3.3-70b-instruct'
+]);
+
+const DEFAULT_AI_MODEL = 'anthropic/claude-3.5-sonnet';
+
+function safeAiModel(value: unknown): string {
+  return typeof value === 'string' && ALLOWED_AI_MODELS.has(value) ? value : DEFAULT_AI_MODEL;
+}
+
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '256kb' }));
+
+// Keep the public demo usable without allowing unbounded POST traffic to
+// consume the in-memory alert/sensor gateway.
+const mutationRateBuckets = new Map<string, { windowStartedAt: number; count: number }>();
+const MUTATION_WINDOW_MS = 60_000;
+const MUTATION_LIMIT_PER_IP = 60;
+
+app.use((req, res, next) => {
+  if (req.method !== 'POST') return next();
+
+  const now = Date.now();
+  const key = req.ip || req.socket.remoteAddress || 'unknown';
+  const current = mutationRateBuckets.get(key);
+  const bucket = !current || now - current.windowStartedAt >= MUTATION_WINDOW_MS
+    ? { windowStartedAt: now, count: 0 }
+    : current;
+
+  bucket.count += 1;
+  mutationRateBuckets.set(key, bucket);
+
+  if (bucket.count > MUTATION_LIMIT_PER_IP) {
+    return res.status(429).json({
+      success: false,
+      error: 'Límite temporal de solicitudes POST alcanzado',
+      retryAfterSeconds: Math.ceil((bucket.windowStartedAt + MUTATION_WINDOW_MS - now) / 1000)
+    });
+  }
+
+  return next();
+});
 
 // Enable CORS for SSE and REST calls
 app.use((req, res, next) => {
@@ -97,6 +140,69 @@ export interface FireEmergencyAlert {
   capNotice: string;
   radioDispatch: string;
   aiDecision?: AIDecisionMeta;
+}
+
+const ALERT_RISK_LEVELS = new Set<FireEmergencyAlert['riskLevel']>([
+  'CRITICAL',
+  'HIGH',
+  'MODERATE',
+  'LOW'
+]);
+
+const ALERT_CATEGORIES = new Set<FireEmergencyAlert['category']>([
+  'WILDFIRE',
+  'SMOLDERING',
+  'AGRICULTURAL_BURN',
+  'WEATHER_WARNING',
+  'INDUSTRIAL'
+]);
+
+const ALERT_NUMBER_LIMITS: Record<string, [number, number]> = {
+  windSpeedKmh: [0, 250],
+  pm25UgM3: [0, 10_000],
+  frpMw: [0, 100_000]
+};
+
+function isRecord(value: unknown): value is Record<string, any> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function finiteNumber(value: unknown, fallback: number, min: number, max: number): number {
+  if (value === undefined || value === null || value === '') return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= min && parsed <= max ? parsed : fallback;
+}
+
+function validateAlertPayload(body: unknown): string[] {
+  if (!isRecord(body)) return ['El cuerpo debe ser un objeto JSON'];
+
+  const errors: string[] = [];
+  if (body.riskLevel !== undefined && !ALERT_RISK_LEVELS.has(body.riskLevel)) {
+    errors.push(`riskLevel debe ser uno de: ${Array.from(ALERT_RISK_LEVELS).join(', ')}`);
+  }
+  if (body.category !== undefined && !ALERT_CATEGORIES.has(body.category)) {
+    errors.push(`category debe ser uno de: ${Array.from(ALERT_CATEGORIES).join(', ')}`);
+  }
+
+  Object.entries(ALERT_NUMBER_LIMITS).forEach(([field, [min, max]]) => {
+    if (body[field] === undefined || body[field] === null || body[field] === '') return;
+    const parsed = Number(body[field]);
+    if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
+      errors.push(`${field} debe ser un número entre ${min} y ${max}`);
+    }
+  });
+
+  if (body.threatenedAssets !== undefined && !Array.isArray(body.threatenedAssets)) {
+    errors.push('threatenedAssets debe ser un arreglo de textos');
+  }
+
+  return errors;
+}
+
+function stringArray(value: unknown, fallback: string[]): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string').slice(0, 20)
+    : fallback;
 }
 
 // In-memory buffer of recent alerts for Cali & Valle del Cauca
@@ -255,6 +361,10 @@ setInterval(() => {
  * Supports query parameter: ?channel=alerts | telemetry | analysis | incidents | all
  */
 app.get('/stream', (req: Request, res: Response) => {
+  if (sseClients.size >= 250) {
+    return res.status(503).json({ success: false, error: 'Límite de conexiones SSE alcanzado' });
+  }
+
   const channel = (req.query.channel as string) || 'all';
   const clientId = `sse_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
   const clientIp = req.socket.remoteAddress || 'unknown';
@@ -315,6 +425,10 @@ app.get('/stream', (req: Request, res: Response) => {
 // POST /stream or POST /stream/alert: Endpoint to emit an alert into the live stream from external applications
 app.post(['/stream', '/stream/alert', '/api/stream/alert'], (req: Request, res: Response) => {
   const body = req.body || {};
+  const validationErrors = validateAlertPayload(body);
+  if (validationErrors.length > 0) {
+    return res.status(422).json({ success: false, error: 'Payload de alerta inválido', fields: validationErrors });
+  }
 
   const alert: FireEmergencyAlert = {
     alertId: body.alertId || `ALR-EXT-${Date.now().toString(36).toUpperCase()}`,
@@ -322,15 +436,15 @@ app.post(['/stream', '/stream/alert', '/api/stream/alert'], (req: Request, res: 
     sector: body.sector || 'Valle del Cauca (Sector No Especificado)',
     region: body.region || 'Área Metropolitana de Santiago de Cali',
     country: 'Colombia (Valle del Cauca)',
-    riskLevel: body.riskLevel || 'HIGH',
-    category: body.category || 'WILDFIRE',
+    riskLevel: body.riskLevel ?? 'HIGH',
+    category: body.category ?? 'WILDFIRE',
     headline: body.headline || 'Alerta de Detección Térmica Reportada por Aplicación Externa',
     description: body.description || 'Notificación emitida desde sistema de monitoreo externo hacia el canal /stream de PyroWatch Valle.',
-    windSpeedKmh: body.windSpeedKmh || 25,
+    windSpeedKmh: finiteNumber(body.windSpeedKmh, 25, 0, 250),
     windDirection: body.windDirection || 'WNW',
-    pm25UgM3: body.pm25UgM3 || 120,
-    frpMw: body.frpMw || 45.0,
-    threatenedAssets: body.threatenedAssets || ['Zona de ladera y vegetación en observación'],
+    pm25UgM3: finiteNumber(body.pm25UgM3, 120, 0, 10_000),
+    frpMw: finiteNumber(body.frpMw, 45.0, 0, 100_000),
+    threatenedAssets: stringArray(body.threatenedAssets, ['Zona de ladera y vegetación en observación']),
     tacticalAction: body.tacticalAction || 'Verificación en terreno por brigada forestal de Bomberos Cali.',
     capNotice: body.capNotice || 'ALERTA PREVENTIVA: Se reporta condición de riesgo de incendio en ladera de Cali.',
     radioDispatch: body.radioDispatch || 'Central Bomberos Cali a Móviles: Unidad de verificación en desplazamiento.'
@@ -539,10 +653,11 @@ wss.on('connection', (ws: WebSocket, req) => {
  */
 async function handleOpenRouterAiStream(ws: WebSocket, requestPayload: any) {
   const streamId = `stream_${Date.now()}`;
-  const model = requestPayload.model || 'anthropic/claude-3.5-sonnet';
-  const prompt =
+  const model = safeAiModel(requestPayload.model);
+  const prompt = String(
     requestPayload.prompt ||
-    'Realiza un diagnóstico táctico inmediato del incendio forestal en el Cerro de las Tres Cruces de Cali con vector de viento WNW hacia Bataclán.';
+      'Realiza un diagnóstico táctico inmediato del incendio forestal en el Cerro de las Tres Cruces de Cali con vector de viento WNW hacia Bataclán.'
+  ).slice(0, 4_000);
 
   ws.send(
     JSON.stringify({
@@ -553,6 +668,18 @@ async function handleOpenRouterAiStream(ws: WebSocket, requestPayload: any) {
       timestamp: new Date().toISOString()
     })
   );
+
+  if (!OPENROUTER_API_KEY) {
+    ws.send(
+      JSON.stringify({
+        channel: 'analysis',
+        type: 'STREAM_ERROR',
+        streamId,
+        error: 'OPENROUTER_API_KEY no está configurada; la inferencia externa está deshabilitada.'
+      })
+    );
+    return;
+  }
 
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -832,21 +959,26 @@ app.post('/api/alerts/evaluate-ai', (req: Request, res: Response) => {
 // POST /api/alerts: Clean REST endpoint for other projects to create / publish an alert
 app.post('/api/alerts', (req: Request, res: Response) => {
   const body = req.body || {};
+  const validationErrors = validateAlertPayload(body);
+  if (validationErrors.length > 0) {
+    return res.status(422).json({ success: false, error: 'Payload de alerta inválido', fields: validationErrors });
+  }
+
   const alert: FireEmergencyAlert = {
     alertId: body.alertId || `ALR-EXT-${Date.now().toString(36).toUpperCase()}`,
     timestamp: new Date().toISOString(),
     sector: body.sector || 'Cali / Valle del Cauca',
     region: body.region || 'Santiago de Cali',
     country: 'Colombia (Valle del Cauca)',
-    riskLevel: body.riskLevel || 'HIGH',
-    category: body.category || 'WILDFIRE',
+    riskLevel: body.riskLevel ?? 'HIGH',
+    category: body.category ?? 'WILDFIRE',
     headline: body.headline || 'Alerta de incendio reportada por aplicación externa',
     description: body.description || 'Reporte recibido vía REST API /api/alerts.',
-    windSpeedKmh: body.windSpeedKmh || 25,
+    windSpeedKmh: finiteNumber(body.windSpeedKmh, 25, 0, 250),
     windDirection: body.windDirection || 'WNW',
-    pm25UgM3: body.pm25UgM3 || 120,
-    frpMw: body.frpMw || 45.0,
-    threatenedAssets: body.threatenedAssets || ['Zona de ladera y vegetación en observación'],
+    pm25UgM3: finiteNumber(body.pm25UgM3, 120, 0, 10_000),
+    frpMw: finiteNumber(body.frpMw, 45.0, 0, 100_000),
+    threatenedAssets: stringArray(body.threatenedAssets, ['Zona de ladera y vegetación en observación']),
     tacticalAction: body.tacticalAction || 'Verificación en terreno por brigada forestal de Bomberos Cali.',
     capNotice: body.capNotice || 'ALERTA PREVENTIVA: Se reporta condición de riesgo de incendio en Cali.',
     radioDispatch: body.radioDispatch || 'Central Bomberos Cali a Móviles: Unidad de verificación en desplazamiento.'
@@ -874,11 +1006,40 @@ app.get('/api/sensors', (_req: Request, res: Response) => {
 
 // POST /api/sensors/ingest: Ingest telemetry from physical IoT hardware (ESP32, Arduino, LoRaWAN, etc.)
 app.post('/api/sensors/ingest', (req: Request, res: Response) => {
-  const { id, name, location, pm25 = 15, co = 2.0, temp = 28, humidity = 45, windSpeed = 12, windDir = 'WNW', flame = false } = req.body || {};
-
-  if (!id) {
-    return res.status(400).json({ error: 'Falta el campo id del sensor (ej. iot-estacion-01)' });
+  const body = req.body || {};
+  if (!isRecord(body) || typeof body.id !== 'string' || body.id.trim().length === 0 || body.id.length > 128) {
+    return res.status(422).json({ error: 'id es obligatorio y debe ser un texto de máximo 128 caracteres' });
   }
+
+  const numericFields: Record<string, [number, number]> = {
+    pm25: [0, 10_000],
+    co: [0, 1_000],
+    temp: [-80, 100],
+    humidity: [0, 100],
+    windSpeed: [0, 250]
+  };
+  const sensorErrors: string[] = [];
+  Object.entries(numericFields).forEach(([field, [min, max]]) => {
+    if (body[field] === undefined || body[field] === null || body[field] === '') return;
+    const parsed = Number(body[field]);
+    if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
+      sensorErrors.push(`${field} debe ser un número entre ${min} y ${max}`);
+    }
+  });
+  if (sensorErrors.length > 0) {
+    return res.status(422).json({ error: 'Telemetría inválida', fields: sensorErrors });
+  }
+
+  const id = body.id.trim();
+  const name = typeof body.name === 'string' ? body.name.slice(0, 160) : undefined;
+  const location = typeof body.location === 'string' ? body.location.slice(0, 240) : undefined;
+  const pm25 = finiteNumber(body.pm25, 15, 0, 10_000);
+  const co = finiteNumber(body.co, 2.0, 0, 1_000);
+  const temp = finiteNumber(body.temp, 28, -80, 100);
+  const humidity = finiteNumber(body.humidity, 45, 0, 100);
+  const windSpeed = finiteNumber(body.windSpeed, 12, 0, 250);
+  const windDir = typeof body.windDir === 'string' ? body.windDir.slice(0, 16) : 'WNW';
+  const flame = body.flame === true || body.flame === 'true';
 
   const isCritical = pm25 > 180 || co > 15 || flame;
   const isElevated = pm25 > 60 || co > 8;
@@ -922,6 +1083,15 @@ app.post('/api/sensors/ingest', (req: Request, res: Response) => {
 // POST /api/simulate/event: Sandbox testing endpoint to inject simulated fire/sensor scenarios
 app.post('/api/simulate/event', (req: Request, res: Response) => {
   const { scenario = 'CRITICAL_FIRE_TRES_CRUCES' } = req.body || {};
+  const allowedScenarios = new Set([
+    'CRITICAL_FIRE_TRES_CRUCES',
+    'SMOLDER_FARALLONES',
+    'SUGARCANE_BURN_PALMIRA_FALSE_POSITIVE',
+    'RESET_NORMAL'
+  ]);
+  if (!allowedScenarios.has(scenario)) {
+    return res.status(422).json({ success: false, error: 'Escenario de simulación no reconocido' });
+  }
 
   let generatedAlert: FireEmergencyAlert | null = null;
   let affectedSensorId = '';
@@ -1082,10 +1252,10 @@ app.post('/api/whatsapp/dispatch', (req: Request, res: Response) => {
 
   res.status(200).json({
     success: true,
-    status: 'DELIVERED',
+    status: 'SIMULATED',
     dispatchId,
     recipient: body.recipientGroup,
-    message: 'Notificación transmitida por WhatsApp Business Bot a la central de bomberos.',
+    message: 'Despacho simulado localmente. No se envió ningún mensaje a WhatsApp.',
     timestamp: new Date().toISOString()
   });
 });
@@ -1265,8 +1435,15 @@ app.post('/api/stream/broadcast', (req: Request, res: Response) => {
 
 // Server-Sent Events (SSE) alternative for HTTP-only AI analysis
 app.get('/api/analyze/sse', async (req: Request, res: Response) => {
-  const prompt = (req.query.prompt as string) || 'Diagnóstico rápido de incendio en Cali';
-  const model = (req.query.model as string) || 'anthropic/claude-3.5-sonnet';
+  if (!OPENROUTER_API_KEY) {
+    return res.status(503).json({
+      success: false,
+      error: 'OPENROUTER_API_KEY no está configurada; la inferencia externa está deshabilitada.'
+    });
+  }
+
+  const prompt = String(req.query.prompt || 'Diagnóstico rápido de incendio en Cali').slice(0, 4_000);
+  const model = safeAiModel(req.query.model);
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
