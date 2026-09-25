@@ -1,0 +1,22 @@
+# Dependencias y artefactos de build (se instalan/crean dentro de la imagen)
+node_modules
+dist
+server.js
+
+# Seguridad: nunca enviar secretos al contexto de build
+.env
+.env.*
+!.env.example
+
+# Archivos de desarrollo y metadatos del repositorio
+.git
+.gitignore
+.vscode
+.idea
+docs
+README.md
+*.log
+npm-debug.log*
+bun.lock
+Dockerfile
+.dockerignore
