@@ -279,11 +279,11 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
             </div>
           </div>
 
-          {/* Sub Navigation Tabs */}
-          <div className="flex border-b border-slate-800 text-xs">
+          {/* Sub Navigation Tabs — scroll horizontal en móvil */}
+          <div className="flex border-b border-slate-800 text-xs overflow-x-auto no-scrollbar">
             <button
               onClick={() => setActiveTab('diagnosis')}
-              className={`pb-2 px-3 font-medium transition border-b-2 ${
+              className={`pb-2 px-3 font-medium transition border-b-2 shrink-0 whitespace-nowrap ${
                 activeTab === 'diagnosis'
                   ? 'border-amber-500 text-amber-400 font-semibold'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -293,7 +293,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('tactical')}
-              className={`pb-2 px-3 font-medium transition border-b-2 ${
+              className={`pb-2 px-3 font-medium transition border-b-2 shrink-0 whitespace-nowrap ${
                 activeTab === 'tactical'
                   ? 'border-amber-500 text-amber-400 font-semibold'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -303,7 +303,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('alerts')}
-              className={`pb-2 px-3 font-medium transition border-b-2 ${
+              className={`pb-2 px-3 font-medium transition border-b-2 shrink-0 whitespace-nowrap ${
                 activeTab === 'alerts'
                   ? 'border-amber-500 text-amber-400 font-semibold'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -313,7 +313,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('raw_json')}
-              className={`pb-2 px-3 font-medium transition border-b-2 flex items-center gap-1 ${
+              className={`pb-2 px-3 font-medium transition border-b-2 flex items-center gap-1 shrink-0 whitespace-nowrap ${
                 activeTab === 'raw_json'
                   ? 'border-amber-500 text-amber-400 font-semibold'
                   : 'border-transparent text-slate-400 hover:text-slate-200'

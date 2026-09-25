@@ -114,14 +114,14 @@ export const MOCK_INCIDENTS: FireIncidentScenario[] = [
       }
     ],
     copernicus: {
+      stacSceneId: 'S2B_MSIL2A_20260925T152631_N0500_R111_T18NVK',
       acquisitionDate: '2026-09-25T14:15:00Z',
-      ndviMean: 0.62,
-      moistureDeficitCategory: 'LOW_RISK',
-      slopeMeanDeg: 22.5,
-      canopyCoverPercent: 78,
-      nearestUrbanDistanceM: 850,
-      fuelModel: 'FOREST_NORMAL',
-      historicalBurnFrequency: 1
+      cloudCoverPercent: 8.5,
+      meanNdvi: 0.62, // Vegetación de ladera saludable en vigilia preventiva
+      currentNbr: -0.12,
+      swirAnomalyScore: 0.18,
+      fuelDrynessIndex: 'LOW',
+      historicalBurnScarProximityKm: 1.4
     }
   },
   {

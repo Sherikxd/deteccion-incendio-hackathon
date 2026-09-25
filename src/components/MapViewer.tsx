@@ -322,10 +322,11 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
   return (
     <div className="relative w-full h-full min-h-[460px] rounded-xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl flex flex-col">
-      {/* Top Map Controls Bar */}
-      <div className="absolute top-3 left-3 right-3 z-[1000] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-        {/* Layer Controls & Toggles */}
-        <div className="flex flex-wrap items-center gap-2 bg-slate-900/95 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-800 shadow-xl text-xs text-slate-200 pointer-events-auto">
+      {/* Top Map Controls Bar + Sector Navigator (apilados en columna para no solaparse en móvil) */}
+      <div className="absolute top-3 left-3 right-3 z-[1000] flex flex-col gap-2 pointer-events-none">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          {/* Layer Controls & Toggles — una fila con scroll horizontal en móvil */}
+          <div className="flex items-center gap-2 bg-slate-900/95 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-800 shadow-xl text-xs text-slate-200 pointer-events-auto flex-nowrap overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible min-w-0">
           <div className="flex items-center gap-1.5 font-semibold text-emerald-400 mr-1">
             <Layers className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Capas GIS:</span>
@@ -341,7 +342,8 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                   : 'text-slate-300 hover:text-white'
               }`}
             >
-              Esri Satélite
+              <span className="hidden sm:inline">Esri Satélite</span>
+              <span className="sm:hidden">Esri</span>
             </button>
             <button
               onClick={() => setActiveBaseLayer('topo')}
@@ -351,7 +353,8 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                   : 'text-slate-300 hover:text-white'
               }`}
             >
-              Topografía IGAC
+              <span className="hidden sm:inline">Topografía IGAC</span>
+              <span className="sm:hidden">Topo</span>
             </button>
             <button
               onClick={() => setActiveBaseLayer('osm')}
@@ -361,7 +364,8 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                   : 'text-slate-300 hover:text-white'
               }`}
             >
-              Calles Cali (OSM)
+              <span className="hidden sm:inline">Calles Cali (OSM)</span>
+              <span className="sm:hidden">OSM</span>
             </button>
           </div>
 
@@ -389,7 +393,8 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             }`}
           >
             <Wind className="w-3 h-3" />
-            <span>Vectores Viento</span>
+            <span className="hidden sm:inline">Vectores Viento</span>
+            <span className="sm:hidden">Viento</span>
           </button>
 
           {/* NOAA GOES-16 ABI Satellite Layer Toggle */}
@@ -403,7 +408,8 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             title="Detección geoestacionaria NOAA GOES-16 cada 10-15 minutos (Banda 7 IR 3.9 µm)"
           >
             <Satellite className="w-3 h-3 text-cyan-400" />
-            <span>GOES-16 ABI (15 min)</span>
+            <span className="hidden sm:inline">GOES-16 ABI (15 min)</span>
+            <span className="sm:hidden">GOES-16</span>
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse ml-0.5"></span>
           </button>
 
@@ -418,36 +424,38 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             title="Cámaras PTZ ópticas y térmicas con visión artificial en cerros de Cali"
           >
             <Camera className="w-3 h-3 text-orange-400" />
-            <span>Cámaras Térmicas</span>
+            <span className="hidden sm:inline">Cámaras Térmicas</span>
+            <span className="sm:hidden">Cámaras</span>
           </button>
         </div>
 
         {/* Quick Pan to Cali Center Button */}
         <button
           onClick={handleCenterCali}
-          className="pointer-events-auto flex items-center gap-1.5 bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg border border-amber-400/40 text-xs font-semibold shadow-lg transition active:scale-95"
+          className="pointer-events-auto shrink-0 flex items-center gap-1.5 bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg border border-amber-400/40 text-xs font-semibold shadow-lg transition active:scale-95"
           title="Centrar vista en Santiago de Cali"
         >
           <Crosshair className="w-3.5 h-3.5" />
           <span>Centrar en Cali</span>
         </button>
-      </div>
+        </div>
 
-      {/* Valle del Cauca Quick Sector Navigator Bar (Floating Below Top Bar) */}
-      <div className="absolute top-16 left-3 z-[1000] flex flex-wrap items-center gap-1.5 bg-slate-900/90 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300 shadow-lg">
-        <span className="text-amber-400 font-mono font-semibold flex items-center gap-1 mr-1">
-          <MapPin className="w-3 h-3" /> Sectores Cali:
-        </span>
-        {CALI_LANDMARKS.map((landmark) => (
-          <button
-            key={landmark.name}
-            onClick={() => handlePanToLandmark(landmark.center, landmark.zoom)}
-            className="flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800/80 hover:bg-amber-600 hover:text-white border border-slate-700/80 text-slate-300 transition text-[11px]"
-          >
-            <span>{landmark.icon}</span>
-            <span>{landmark.name}</span>
-          </button>
-        ))}
+        {/* Valle del Cauca Quick Sector Navigator Bar — scroll horizontal en móvil */}
+        <div className="pointer-events-auto flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300 shadow-lg flex-nowrap overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible sm:self-start">
+          <span className="text-amber-400 font-mono font-semibold flex items-center gap-1 mr-1 shrink-0">
+            <MapPin className="w-3 h-3" /> Sectores Cali:
+          </span>
+          {CALI_LANDMARKS.map((landmark) => (
+            <button
+              key={landmark.name}
+              onClick={() => handlePanToLandmark(landmark.center, landmark.zoom)}
+              className="flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800/80 hover:bg-amber-600 hover:text-white border border-slate-700/80 text-slate-300 transition text-[11px] shrink-0 whitespace-nowrap"
+            >
+              <span>{landmark.icon}</span>
+              <span>{landmark.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Map Legend Overlay */}

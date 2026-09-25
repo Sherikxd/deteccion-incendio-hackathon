@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+/* ===== Ajustes para móvil ===== */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Utilidad: tiras de pestañas con scroll horizontal sin barra visible */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
