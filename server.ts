@@ -11,8 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const OPENROUTER_API_KEY =
-  process.env.OPENROUTER_API_KEY ||
-  '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';
+  process.env.OPENROUTER_API_KEY;
 
 const app = express();
 app.use(express.json());
