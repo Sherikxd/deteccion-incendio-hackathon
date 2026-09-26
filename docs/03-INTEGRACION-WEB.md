@@ -1,12 +1,12 @@
 # 💻 Guía de Integración Web, Móvil y Hardware IoT
 
-Esta guía contiene ejemplos de código listos para producción para integrar **PyroWatch Valle** en cualquier aplicación frontend (React, Vue, Next.js), backend (Node.js, Python), app móvil (Flutter, React Native) o microcontrolador físico (ESP32 / Arduino).
+Esta guía contiene ejemplos de código listos para producción para integrar **NatureIntelligence** en cualquier aplicación frontend (React, Vue, Next.js), backend (Node.js, Python), app móvil (Flutter, React Native) o microcontrolador físico (ESP32 / Arduino).
 
 ---
 
 ## 1. Integración en React / Next.js / Vite (Consumir Alertas y Sensores)
 
-### Hook Completo: `usePyroWatch.ts`
+### Hook Completo: `useNatureIntelligence.ts`
 ```typescript
 import { useState, useEffect } from 'react';
 
@@ -33,7 +33,7 @@ export interface SensorNode {
   status: 'critical' | 'elevated' | 'normal';
 }
 
-export function usePyroWatch(baseUrl: string = 'https://<tu-app-url>') {
+export function useNatureIntelligence(baseUrl: string = 'https://<tu-app-url>') {
   const [alerts, setAlerts] = useState<FireAlert[]>([]);
   const [sensors, setSensors] = useState<SensorNode[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);

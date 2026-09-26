@@ -1,6 +1,6 @@
-# 📖 PyroWatch Valle — Documentación Técnica del Sistema
+# 📖 NatureIntelligence — Documentación Técnica del Sistema
 
-Bienvenido a la documentación oficial de **PyroWatch Valle**, la plataforma de detección temprana, verificación de incendios de cobertura vegetal y transmisión de alertas en tiempo real para **Santiago de Cali y el Valle del Cauca**.
+Bienvenido a la documentación oficial de **NatureIntelligence**, la plataforma de detección temprana, verificación de incendios de cobertura vegetal y transmisión de alertas en tiempo real para **Santiago de Cali y el Valle del Cauca**.
 
 Esta carpeta contiene la documentación detallada sobre el funcionamiento interno, la arquitectura de datos satelitales e IoT, y las guías prácticas de integración en aplicaciones web, móviles y microcontroladores físicos.
 

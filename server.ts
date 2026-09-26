@@ -4,6 +4,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { sseEventName } from './src/server/sseEvents';
 
 dotenv.config();
 
@@ -210,6 +211,10 @@ function stringArray(value: unknown, fallback: string[]): string[] {
 // Sin incendios activos en las laderas de Cali. Los simulacros se inyectan en el Sandbox.
 const recentAlerts: FireEmergencyAlert[] = [];
 
+// Canonical SSE event name per channel (contract documented in docs/04-API-REFERENCE.md).
+// Source of truth lives in src/server/sseEvents.ts so it is unit-testable without
+// booting the server; payload `type` still travels inside `data` for discrimination.
+
 // Unified broadcast function: broadcasts to both WebSocket clients and SSE (/stream) clients
 export function broadcastToChannel(channel: string, payload: any, senderWs?: WebSocket) {
   const timestamp = new Date().toISOString();
@@ -230,8 +235,7 @@ export function broadcastToChannel(channel: string, payload: any, senderWs?: Web
   });
 
   // 2. Broadcast to SSE clients connected to /stream
-  const sseEventName = payload?.type ? String(payload.type).toLowerCase() : channel;
-  const sseChunk = `event: ${sseEventName}\ndata: ${jsonString}\n\n`;
+  const sseChunk = `event: ${sseEventName(channel)}\ndata: ${jsonString}\n\n`;
 
   sseClients.forEach((sseClient, clientId) => {
     if (sseClient.channel === 'all' || sseClient.channel === channel) {
@@ -400,7 +404,7 @@ app.get('/stream', (req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
     totalActiveListeners: sseClients.size,
     availableChannels: ['alerts', 'telemetry', 'incidents', 'analysis', 'all'],
-    info: 'Conexión activa al canal /stream de PyroWatch Valle. Escuchando alertas tempranas de incendios forestales y telemetría de Cali.'
+    info: 'Conexión activa al canal /stream de NatureIntelligence. Escuchando alertas tempranas de incendios forestales y telemetría de Cali.'
   };
 
   res.write(`event: connected\ndata: ${JSON.stringify(welcomePayload)}\n\n`);
@@ -439,7 +443,7 @@ app.post(['/stream', '/stream/alert', '/api/stream/alert'], (req: Request, res: 
     riskLevel: body.riskLevel ?? 'HIGH',
     category: body.category ?? 'WILDFIRE',
     headline: body.headline || 'Alerta de Detección Térmica Reportada por Aplicación Externa',
-    description: body.description || 'Notificación emitida desde sistema de monitoreo externo hacia el canal /stream de PyroWatch Valle.',
+    description: body.description || 'Notificación emitida desde sistema de monitoreo externo hacia el canal /stream de NatureIntelligence.',
     windSpeedKmh: finiteNumber(body.windSpeedKmh, 25, 0, 250),
     windDirection: body.windDirection || 'WNW',
     pm25UgM3: finiteNumber(body.pm25UgM3, 120, 0, 10_000),
@@ -480,7 +484,7 @@ app.get(['/stream/info', '/api/stream/info'], (req: Request, res: Response) => {
   const wsProto = req.protocol === 'https' ? 'wss' : 'ws';
 
   res.json({
-    service: 'PyroWatch Valle — Real-Time Alert & Telemetry Stream',
+    service: 'NatureIntelligence — Real-Time Alert & Telemetry Stream',
     region: 'Santiago de Cali & Valle del Cauca, Colombia',
     streamEndpoint: `${proto}://${host}/stream`,
     wsEndpoint: `${wsProto}://${host}/stream`,
@@ -530,7 +534,7 @@ wss.on('connection', (ws: WebSocket, req) => {
       openRouterConfigured: Boolean(OPENROUTER_API_KEY),
       activeSensors: CALI_SENSORS_STATE.map((s) => s.id),
       recentAlertsCount: recentAlerts.length,
-      message: 'PyroWatch Valle Real-Time Stream Gateway conectado exitosamente.'
+      message: 'NatureIntelligence Real-Time Stream Gateway conectado exitosamente.'
     })
   );
 
@@ -686,8 +690,8 @@ async function handleOpenRouterAiStream(ws: WebSocket, requestPayload: any) {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://pyrowatch.valle.co',
-        'X-Title': 'PyroWatch Valle - Cali Forest Fire Detection',
+        'HTTP-Referer': 'https://natureintelligence.ai',
+        'X-Title': 'NatureIntelligence - Cali Forest Fire Detection',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -817,7 +821,7 @@ Emite un reporte táctico estructurado en:
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
     status: 'ok',
-    service: 'PyroWatch Valle Real-Time Stream Gateway',
+    service: 'NatureIntelligence Real-Time Stream Gateway',
     region: 'Valle del Cauca / Cali (Colombia)',
     uptimeSeconds: Math.floor(process.uptime()),
     connectedWsClients: wsClients.size,
@@ -1125,7 +1129,7 @@ app.post('/api/simulate/event', (req: Request, res: Response) => {
       frpMw: 185.0,
       threatenedAssets: ['Ecoparque Bataclán', 'Barrio Juanambú (Comuna 2)'],
       tacticalAction: 'Despacho de simulación para máquinas forestales de Bomberos Cali.',
-      capNotice: 'SIMULACRO OPERATIVO: Pruebas de integración de la API PyroWatch.',
+      capNotice: 'SIMULACRO OPERATIVO: Pruebas de integración de la API NatureIntelligence.',
       radioDispatch: 'Central X-1: Atención unidades, ejercicio de simulación de incendio forestal.'
     };
   } else if (scenario === 'SMOLDER_FARALLONES') {
@@ -1328,21 +1332,42 @@ app.get('/api/cameras', (_req: Request, res: Response) => {
 });
 
 // POST /api/simulate/spread: Rothermel Wildfire Propagation Simulation
-app.post('/api/simulate/spread', (req: Request, res: Response) => {
-  const { windSpeed = 30, slopeDeg = 30, fuelMoisture = 'EXTREME' } = req.body || {};
+const SPREAD_FUEL_FACTORS: Record<string, number> = {
+  EXTREME: 1.8,
+  HIGH: 1.3,
+  MODERATE: 0.8
+};
 
+app.post('/api/simulate/spread', (req: Request, res: Response) => {
+  const body = req.body || {};
+  const windSpeed = finiteNumber(body.windSpeed, 30, 0, 250);
+  const slopeDeg = finiteNumber(body.slopeDeg, 30, 0, 60);
+  const fuelMoisture = typeof body.fuelMoisture === 'string' && body.fuelMoisture in SPREAD_FUEL_FACTORS
+    ? body.fuelMoisture
+    : undefined;
+
+  if (!fuelMoisture) {
+    return res.status(422).json({
+      success: false,
+      error: 'fuelMoisture debe ser uno de: EXTREME, HIGH, MODERATE',
+      fields: ['fuelMoisture']
+    });
+  }
+
+  const windDirection = typeof body.windDirection === 'string' ? body.windDirection.slice(0, 8) : undefined;
   const windFactor = Math.pow(windSpeed / 10, 1.4);
   const slopeFactor = 1 + 5.275 * Math.pow(Math.tan((slopeDeg * Math.PI) / 180), 2);
-  const fuelFactor = fuelMoisture === 'EXTREME' ? 1.8 : 1.2;
+  const fuelFactor = SPREAD_FUEL_FACTORS[fuelMoisture];
 
-  const rateOfSpreadMpm = parseFloat((4.5 * windFactor * slopeFactor * fuelFactor).toFixed(1));
+  // Same floor as the browser-side simulator, so both models agree at calm wind
+  const rateOfSpreadMpm = Math.max(2, parseFloat((4.5 * windFactor * slopeFactor * fuelFactor).toFixed(1)));
   const rateOfSpreadKmh = (rateOfSpreadMpm * 60) / 1000;
-  const timeToUrbanMin = Math.round(1400 / rateOfSpreadMpm);
+  const timeToUrbanMin = rateOfSpreadMpm > 0 ? Math.round(1400 / rateOfSpreadMpm) : null;
 
   res.json({
     success: true,
     model: 'Rothermel Wildfire Spread (Surface Model)',
-    inputs: { windSpeed, slopeDeg, fuelMoisture },
+    inputs: { windSpeed, slopeDeg, fuelMoisture, ...(windDirection ? { windDirection } : {}) },
     results: {
       rateOfSpreadMetersPerMinute: rateOfSpreadMpm,
       rateOfSpreadKmPerHour: parseFloat(rateOfSpreadKmh.toFixed(2)),
@@ -1365,7 +1390,7 @@ app.get(['/api', '/api/docs'], (req: Request, res: Response) => {
   const proto = req.protocol === 'https' ? 'https' : 'http';
 
   res.json({
-    name: 'PyroWatch Valle API',
+    name: 'NatureIntelligence API',
     description: 'API en tiempo real para detección, verificación y despacho de incendios forestales en Cali & Valle del Cauca.',
     baseUrl: `${proto}://${host}`,
     endpoints: [
@@ -1455,8 +1480,8 @@ app.get('/api/analyze/sse', async (req: Request, res: Response) => {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://pyrowatch.valle.co',
-        'X-Title': 'PyroWatch Valle',
+        'HTTP-Referer': 'https://natureintelligence.ai',
+        'X-Title': 'NatureIntelligence',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -1508,7 +1533,7 @@ async function startServer() {
 
   const PORT = parseInt(process.env.PORT || '3000', 10);
   server.listen(PORT, '0.0.0.0', () => {
-    console.log(`> PyroWatch Valle Server & Stream Gateway running on port ${PORT}`);
+    console.log(`> NatureIntelligence Server & Stream Gateway running on port ${PORT}`);
     console.log(`> HTTP SSE Stream available at: http://localhost:${PORT}/stream`);
     console.log(`> WebSocket Stream available at: ws://localhost:${PORT}/ws and /stream`);
   });

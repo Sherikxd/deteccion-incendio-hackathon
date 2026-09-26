@@ -3,7 +3,9 @@
  * Designed for OpenRouter (Anthropic Claude 3.5 Sonnet, OpenAI GPT-4o, Llama 3.3, Gemini 2.0 Flash)
  */
 
-export const SYSTEM_PROMPT_WILDFIRE = `Eres el Agente Especialista en Inteligencia y Verificación de Incendios Forestales (PyroWatch-AI), un sistema de nivel operativo para centrales de despacho de emergencias y brigadas de respuesta rápida.
+import type { FireIncidentScenario } from '../types/fire';
+
+export const SYSTEM_PROMPT_WILDFIRE = `Eres el Agente Especialista en Inteligencia y Verificación de Incendios Forestales (NatureIntelligence-AI), un sistema de nivel operativo para centrales de despacho de emergencias y brigadas de respuesta rápida.
 
 Tu misión es realizar la FUSIÓN DE DATOS MULTIFUENTE y la VERIFICACIÓN ANALÍTICA entre:
 1. Sensores Satelitales (NASA FIRMS: VIIRS NOAA-20/SNPP, MODIS Terra/Aqua).
@@ -101,18 +103,41 @@ export const USER_PROMPT_TEMPLATE = `Analiza el siguiente incidente forestal mul
 
 Instrucción adicional: Correlaciona la orientación del viento con la posición del sensor más cercano y calcula la probabilidad de falso positivo frente a instalaciones conocidas. Emite el JSON estricto.`;
 
+/** Contexto meteorológico que se inyecta en USER_PROMPT_TEMPLATE. */
+export interface MeteoPromptContext {
+  windSpeedKmh: number;
+  windDirectionCardinal: string;
+  windDirectionDegrees: number;
+  ambientTemperatureC: number;
+  relativeHumidityPercent: number;
+}
+
+/**
+ * Única fuente de verdad para construir el prompt de usuario inyectado:
+ * sustituye los cuatro marcadores de USER_PROMPT_TEMPLATE con los payloads
+ * reales del escenario, de modo que la plantilla no pueda divergir de la UI.
+ */
+export function buildUserPrompt(incident: FireIncidentScenario, meteo: MeteoPromptContext): string {
+  return USER_PROMPT_TEMPLATE.replace('{{FIRMS_PAYLOAD}}', JSON.stringify(incident.hotspots, null, 2))
+    .replace('{{IOT_PAYLOAD}}', JSON.stringify(incident.sensors, null, 2))
+    .replace('{{COPERNICUS_PAYLOAD}}', JSON.stringify(incident.copernicus, null, 2))
+    .replace('{{METEO_PAYLOAD}}', JSON.stringify(meteo, null, 2));
+}
+
 export const OPENROUTER_INTEGRATION_CODE_TS = [
   "// backend/src/services/wildfireAlertService.ts",
-  "// Asegura que las credenciales (OPENROUTER_API_KEY y NASA FIRMS MAP_KEY)",
-  "// NUNCA se expongan en el frontend ni en el repositorio.",
+  "// La API key NUNCA se expone en el frontend ni en el repositorio:",
+  "// vive solo en variables de entorno del backend.",
+  "// (NASA FIRMS_MAP_KEY, cuando se conecte la API de FIRMS, va en process.env igual).",
   "",
   "import express from 'express';",
+  "// System Prompt maestro: el mismo que exporta src/prompts/masterFirePrompt.ts",
+  "import { SYSTEM_PROMPT_WILDFIRE } from './prompts/masterFirePrompt';",
   "",
   "const app = express();",
   "app.use(express.json());",
   "",
   "const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;",
-  "const FIRMS_MAP_KEY = process.env.FIRMS_MAP_KEY; // Límite NASA: 5000 peticiones / 10 min",
   "",
   "app.post('/api/verify-wildfire', async (req, res) => {",
   "  try {",
@@ -136,14 +161,16 @@ export const OPENROUTER_INTEGRATION_CODE_TS = [
   "      method: 'POST',",
   "      headers: {",
   "        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,",
-  "        'HTTP-Referer': 'https://pyrowatch.ai',",
-  "        'X-Title': 'PyroWatch AI Wildfire Early Detection',",
+  "        'HTTP-Referer': 'https://natureintelligence.ai',",
+  "        'X-Title': 'NatureIntelligence AI Wildfire Early Detection',",
   "        'Content-Type': 'application/json'",
   "      },",
   "      body: JSON.stringify({",
   "        model: 'anthropic/claude-3.5-sonnet', // O 'openai/gpt-4o', 'meta-llama/llama-3.3-70b-instruct'",
   "        temperature: 0.1, // Baja temperatura para rigor analítico determinista",
-  "        response_format: { type: 'json_object' },",
+  "        // El System Prompt maestro ya fuerza salida JSON estricto (y más abajo se limpian",
+  "        // los fences ```json), así que no se envía response_format: no es compatible con",
+  "        // todos los proveedores de OpenRouter.",
   "        messages: [",
   "          { role: 'system', content: SYSTEM_PROMPT_WILDFIRE },",
   "          { role: 'user', content: userContent }",
@@ -181,11 +208,15 @@ export const OPENROUTER_INTEGRATION_CODE_PY = [
   "",
   "OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')",
   "",
+  "# System Prompt maestro: el mismo que exporta src/prompts/masterFirePrompt.ts",
+  "# (guárdalo en system_prompt.txt y léelo, o pégalo como string literal).",
+  "SYSTEM_PROMPT_WILDFIRE = open('system_prompt.txt', encoding='utf-8').read()",
+  "",
   "def verify_wildfire_incident(firms_hotspots, iot_sensors, copernicus_context):",
   "    headers = {",
   "        'Authorization': f'Bearer {OPENROUTER_API_KEY}',",
-  "        'HTTP-Referer': 'https://pyrowatch.org',",
-  "        'X-Title': 'PyroWatch Early Detection System',",
+  "        'HTTP-Referer': 'https://natureintelligence.ai',",
+  "        'X-Title': 'NatureIntelligence Early Detection System',",
   "        'Content-Type': 'application/json'",
   "    }",
   "",
@@ -198,6 +229,7 @@ export const OPENROUTER_INTEGRATION_CODE_PY = [
   "    body = {",
   "        'model': 'anthropic/claude-3.5-sonnet', # o 'meta-llama/llama-3.3-70b-instruct'",
   "        'temperature': 0.1,",
+  "        'max_tokens': 4096, # obligatorio para los modelos Anthropic en OpenRouter",
   "        'messages': [",
   "            {'role': 'system', 'content': SYSTEM_PROMPT_WILDFIRE},",
   "            {'role': 'user', 'content': f'Verificar incidente forestal:\\n{json.dumps(user_payload, indent=2)}'}",

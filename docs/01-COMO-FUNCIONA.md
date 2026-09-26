@@ -1,11 +1,11 @@
-# 🔍 Cómo Funciona PyroWatch Valle
+# 🔍 Cómo Funciona NatureIntelligence
 
 ## 1. Introducción y Propósito
-**PyroWatch Valle** resuelve el problema crítico de la latencia y los falsos positivos en la detección de incendios de cobertura vegetal en laderas urbanas y reservas forestales de **Santiago de Cali y el Valle del Cauca**.
+**NatureIntelligence** resuelve el problema crítico de la latencia y los falsos positivos en la detección de incendios de cobertura vegetal en laderas urbanas y reservas forestales de **Santiago de Cali y el Valle del Cauca**.
 
 El fuego en pendientes pronunciadas (como el Cerro de las Tres Cruces o Cristo Rey) se propaga a velocidades superiores a **2.5 km/h**, empujado por los vientos vespertinos del Océano Pacífico que entran por el cañón del Río Cali en dirección WNW hacia el área urbana residencial.
 
-PyroWatch Valle integra 5 pilares tecnológicos en tiempo real:
+NatureIntelligence integra 5 pilares tecnológicos en tiempo real:
 1. **Detección Satelital Continua:** Satélites polares de alta resolución (NASA VIIRS a 375m) complementados con el satélite geoestacionario **NOAA GOES-16 (cada 10-15 minutos)**.
 2. **Red de Sensores Terrestres IoT:** Nodos físicos in-situ que miden humo fino (PM2.5), monóxido de carbono (CO), velocidad y dirección del viento, y sensor de llama.
 3. **Red de Cámaras Térmicas PTZ con Visión Artificial (IA Edge):** Cámaras 360° en las cimas que ejecutan inferencia ligera (YOLOv8 Edge) para detectar columnas de humo en menos de 30 segundos.

@@ -3,14 +3,9 @@ import {
   Satellite,
   Layers,
   Server,
-  Key,
-  ShieldAlert,
   Flame,
-  Radio,
   FileCheck2,
-  ExternalLink,
   Cpu,
-  Clock,
   Lock
 } from 'lucide-react';
 
@@ -39,14 +34,21 @@ export const ArchitectureDocs: React.FC = () => {
               </span>
               <h3 className="font-bold text-sm text-slate-100 font-mono">1. NASA FIRMS (Focos Térmicos)</h3>
             </div>
-            <span className="text-[10px] font-mono bg-red-950/80 text-red-300 border border-red-800 px-2 py-0.5 rounded">
-              Límite: 5.000 req / 10 min
+            <span className="text-[10px] font-mono bg-amber-950/80 text-amber-300 border border-amber-800 px-2 py-0.5 rounded">
+              Roadmap · aún no conectado
             </span>
           </div>
 
           <p className="text-xs text-slate-300 leading-relaxed">
-            Proporciona anomalías térmicas casi en tiempo real (NRT) detectadas por los sensores <strong>VIIRS</strong> (S-NPP, NOAA-20, NOAA-21 a 375m) y <strong>MODIS</strong> (Terra, Aqua a 1km).
+            Proporciona anomalías térmicas casi en tiempo real (NRT) detectadas por los sensores <strong>VIIRS</strong> (S-NPP, NOAA-20, NOAA-21 a 375m) y <strong>MODIS</strong> (Terra, Aqua a 1km). Límite del servicio: <strong>5.000 transacciones por ventana de 10 minutos</strong>.
           </p>
+
+          <div className="bg-amber-950/30 border border-amber-800/50 p-2.5 rounded text-[11px] text-amber-200 leading-relaxed">
+            <strong className="font-mono text-amber-300">Estado de implementación:</strong> esta versión del gateway{' '}
+            <strong>no consulta aún FIRMS</strong>: las alertas satelitales llegan por <code className="font-mono">POST /api/alerts</code>,{' '}
+            <code className="font-mono">POST /stream</code> o el simulador del sandbox. El flujo descrito a continuación es la
+            integración objetivo.
+          </div>
 
           <div className="space-y-2 text-xs">
             <div className="bg-slate-900/90 p-2.5 rounded border border-slate-800 text-[11px] font-mono text-amber-300">
@@ -60,7 +62,7 @@ export const ArchitectureDocs: React.FC = () => {
               <p className="text-[11px] leading-relaxed">
                 • El <code className="text-amber-300">MAP_KEY</code> otorgado por NASA debe residir <strong>estrictamente en variables de entorno del backend</strong> (<code className="text-slate-300">process.env.FIRMS_MAP_KEY</code>). Nunca se expone en código cliente React ni repositorios git.
                 <br />• NASA impone un límite estricto de <strong>5.000 transacciones por ventana de 10 minutos</strong>. Peticiones de áreas geográficas muy amplias o rangos de días extensos consumen más de 1 transacción.
-                <br />• <strong>Buenas prácticas:</strong> Cachear respuestas FIRMS en Redis durante 5-10 minutos, ya que los satélites de órbita polar pasan aproximadamente cada 3 horas.
+                <br />• <strong>Buenas prácticas (al conectar la API):</strong> cachear las respuestas FIRMS 5-10 minutos (Redis u otra caché en memoria), ya que los satélites de órbita polar pasan aproximadamente cada 3 horas. El límite aplica por clave y se factura como transacciones.
               </p>
             </div>
           </div>
@@ -137,7 +139,7 @@ export const ArchitectureDocs: React.FC = () => {
           </div>
 
           <p className="text-xs text-slate-300 leading-relaxed">
-            Se integra mediante el <strong>Catálogo STAC de Copernicus</strong> y la <strong>Statistical API de Sentinel Hub</strong> para evaluar las propiedades biofísicas del combustible antes y después del fuego.
+            Se integra mediante el <strong>Catálogo STAC de Copernicus</strong> y la <strong>Statistical API de Sentinel Hub</strong> para evaluar las propiedades biofísicas del combustible antes y después del fuego. En esta versión los índices <code className="text-amber-300">copernicus</code> (NDVI/NBR) provienen del payload del escenario; la llamada real a Sentinel Hub queda pendiente.
           </p>
 
           <div className="bg-slate-900 p-2.5 rounded border border-slate-800 text-[11px] text-slate-300 space-y-1">
@@ -156,30 +158,35 @@ export const ArchitectureDocs: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-center">
           <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
-            <div className="text-[10px] font-mono text-red-400 font-bold uppercase">Paso 1: Ingesta FIRMS & IoT</div>
+            <div className="text-[10px] font-mono text-red-400 font-bold uppercase">Paso 1: Ingesta de datos</div>
             <div className="text-xs text-slate-300 mt-1">
-              Backend consulta API FIRMS (respetando los 5.000 req/10m) y broker MQTT con sensores de campo (PM2.5 / CO).
+              Alertas satelitales por <code className="font-mono text-amber-300">POST /api/alerts</code> y{' '}
+              <code className="font-mono text-amber-300">POST /stream</code>; telemetría IoT por{' '}
+              <code className="font-mono text-amber-300">POST /api/sensors/ingest</code> o el WebSocket{' '}
+              <code className="font-mono text-amber-300">publish_telemetry</code>.
             </div>
           </div>
 
           <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
-            <div className="text-[10px] font-mono text-purple-400 font-bold uppercase">Paso 2: Enriquecimiento STAC</div>
+            <div className="text-[10px] font-mono text-purple-400 font-bold uppercase">Paso 2: Enriquecimiento ambiental</div>
             <div className="text-xs text-slate-300 mt-1">
-              Extracción de índices NDVI/NBR de Copernicus para calcular la sequedad del combustible vegetal.
+              NDVI/NBR y contexto del escenario (Sentinel / Copernicus) para calcular la sequedad del combustible vegetal.
             </div>
           </div>
 
           <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
             <div className="text-[10px] font-mono text-amber-400 font-bold uppercase">Paso 3: Fusión IA OpenRouter</div>
             <div className="text-xs text-slate-300 mt-1">
-              El System Prompt maestro evalúa vector de viento, descarta chimeneas/quemas y clasifica el riesgo.
+              El System Prompt maestro evalúa vector de viento, descarta chimeneas/quemas y clasifica el riesgo (si no hay{' '}
+              <code className="font-mono">OPENROUTER_API_KEY</code>, aplica el motor de reglas local).
             </div>
           </div>
 
           <div className="bg-slate-900 p-3 rounded-lg border border-slate-800">
-            <div className="text-[10px] font-mono text-emerald-400 font-bold uppercase">Paso 4: Despacho Automatizado</div>
+            <div className="text-[10px] font-mono text-emerald-400 font-bold uppercase">Paso 4: Difusión & despacho</div>
             <div className="text-xs text-slate-300 mt-1">
-              Emisión de alerta celular CAP (160 caracteres), despacho radial a bomberos y trazado en mapa táctico.
+              Difusión por SSE/WebSocket a los clientes suscritos, despacho de WhatsApp (simulado en local con{' '}
+              <code className="font-mono">/api/whatsapp/dispatch</code>) y trazado en el mapa táctico.
             </div>
           </div>
         </div>

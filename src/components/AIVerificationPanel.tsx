@@ -20,6 +20,7 @@ import {
   Building2,
   CheckCircle2
 } from 'lucide-react';
+import { copyTextToClipboard } from '../utils/copyToClipboard';
 
 interface AIVerificationPanelProps {
   incident: FireIncidentScenario;
@@ -87,9 +88,11 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
   };
 
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(id);
-    setTimeout(() => setCopiedKey(null), 2000);
+    copyTextToClipboard(text).then((copied) => {
+      if (!copied) return;
+      setCopiedKey(id);
+      setTimeout(() => setCopiedKey(null), 2000);
+    });
   };
 
   const triggerDispatchAction = (actionTitle: string) => {

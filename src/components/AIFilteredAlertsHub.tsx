@@ -23,6 +23,7 @@ import {
   Layers,
   ArrowRight
 } from 'lucide-react';
+import { copyTextToClipboard } from '../utils/copyToClipboard';
 
 export const AIFilteredAlertsHub: React.FC = () => {
   const [alerts, setAlerts] = useState<FireEmergencyAlert[]>([]);
@@ -73,9 +74,11 @@ export const AIFilteredAlertsHub: React.FC = () => {
   }, [activeFilter]);
 
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(id);
-    setTimeout(() => setCopiedKey(null), 2000);
+    copyTextToClipboard(text).then((copied) => {
+      if (!copied) return;
+      setCopiedKey(id);
+      setTimeout(() => setCopiedKey(null), 2000);
+    });
   };
 
   const handleRunAiEvaluation = async () => {

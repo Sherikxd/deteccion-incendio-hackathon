@@ -3,7 +3,6 @@ import { wsClient, WebSocketMessage, StreamChannel } from '../services/websocket
 import { FireIncidentScenario } from '../types/fire';
 import { AVAILABLE_MODELS } from '../services/openRouterService';
 import {
-  Radio,
   Sparkles,
   Zap,
   Activity,
@@ -16,19 +15,21 @@ import {
   WifiOff,
   Filter,
   Trash2,
-  Play,
-  RotateCcw,
   CheckCircle2,
   Server,
-  Layers,
-  Flame,
-  ArrowRight,
-  ExternalLink
+  AlertTriangle
 } from 'lucide-react';
+import { copyTextToClipboard } from '../utils/copyToClipboard';
 
 interface WebSocketStreamStudioProps {
   currentIncident: FireIncidentScenario;
 }
+
+/** Terminal frame with a stable React key (msg.timestamp alone is not unique enough). */
+type TerminalFrame = WebSocketMessage & { __id: number };
+
+const defaultPromptFor = (incident: FireIncidentScenario): string =>
+  `Emitir boletín de emergencia táctico inmediato para el ${incident.title}. Reportar velocidad de viento, riesgo a la interfaz urbana y activar unidades de Bomberos Cali.`;
 
 export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
   currentIncident
@@ -36,18 +37,26 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [latency, setLatency] = useState<number | undefined>(undefined);
   const [selectedChannel, setSelectedChannel] = useState<StreamChannel>('all');
-  const [messages, setMessages] = useState<WebSocketMessage[]>([]);
+  const [messages, setMessages] = useState<TerminalFrame[]>([]);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const frameIdCounter = useRef<number>(0);
 
   // AI Stream state
   const [selectedModel, setSelectedModel] = useState<string>(AVAILABLE_MODELS[0].id);
-  const [aiPrompt, setAiPrompt] = useState<string>(
-    `Emitir boletín de emergencia táctico inmediato para el ${currentIncident.title}. Reportar velocidad de viento, riesgo a la interfaz urbana y activar unidades de Bomberos Cali.`
-  );
+  const [aiPrompt, setAiPrompt] = useState<string>(defaultPromptFor(currentIncident));
+  // Tracks the auto-generated default so a prompt edited by the operator is not
+  // silently overwritten when they switch sector.
+  const lastDefaultPromptRef = useRef<string>(defaultPromptFor(currentIncident));
   const [isStreamingAi, setIsStreamingAi] = useState<boolean>(false);
   const [streamedText, setStreamedText] = useState<string>('');
   const [streamTokensCount, setStreamTokensCount] = useState<number>(0);
-  const [streamStats, setStreamStats] = useState<{ startTime: number; chunks: number } | null>(null);
+  const [streamError, setStreamError] = useState<string | null>(null);
+
+  // The server assigns the streamId in STREAM_START; chunks broadcast on the shared
+  // #analysis channel must be filtered by it, otherwise concurrent streams from other
+  // operators get mixed into this output window.
+  const activeStreamIdRef = useRef<string | null>(null);
+  const streamWatchdogRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Ingestion Simulator state
   const [customSensorName, setCustomSensorName] = useState<string>('Dron Térmico Bomberos Cali #3');
@@ -59,14 +68,38 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
   // Code snippet tab
   const [codeLanguage, setCodeLanguage] = useState<'python' | 'nodejs' | 'curl' | 'browser'>('python');
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
 
-  // Update prompt default when incident changes
+  const clearStreamWatchdog = () => {
+    if (streamWatchdogRef.current) {
+      clearTimeout(streamWatchdogRef.current);
+      streamWatchdogRef.current = null;
+    }
+  };
+
+  // If STREAM_START never arrives (socket dropped mid-handshake), release the spinner
+  // instead of leaving the UI spinning forever.
+  const startStreamWatchdog = () => {
+    clearStreamWatchdog();
+    streamWatchdogRef.current = setTimeout(() => {
+      setIsStreamingAi(false);
+      setStreamError('Sin respuesta del stream de IA. Verifica la conexión o vuelve a intentarlo.');
+      streamWatchdogRef.current = null;
+    }, 20000);
+  };
+
+  // Newest frames are prepended, so keep the viewport pinned to the top of the terminal
   useEffect(() => {
-    setAiPrompt(
-      `Emitir boletín de emergencia táctico inmediato para el ${currentIncident.title}. Reportar velocidad de viento, riesgo a la interfaz urbana y activar unidades de Bomberos Cali.`
-    );
-  }, [currentIncident.id]);
+    terminalRef.current?.scrollTo({ top: 0 });
+  }, [messages.length]);
+
+  // Update the default prompt when the incident changes, but never clobber a
+  // customized prompt: only replace it while it still matches the previous default.
+  useEffect(() => {
+    const next = defaultPromptFor(currentIncident);
+    setAiPrompt((prev) => (prev === lastDefaultPromptRef.current ? next : prev));
+    lastDefaultPromptRef.current = next;
+  }, [currentIncident.id, currentIncident.title]);
 
   // Connect to WebSocket client
   useEffect(() => {
@@ -78,48 +111,68 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
     });
 
     const unsubMessages = wsClient.addMessageListener((msg) => {
-      setMessages((prev) => [msg, ...prev.slice(0, 99)]); // keep last 100 messages
+      setMessages((prev) => [{ ...msg, __id: frameIdCounter.current++ }, ...prev.slice(0, 99)]); // keep last 100 messages
 
-      // Handle AI stream chunks
+      // Handle AI stream chunks (only for the stream this component started)
       if (msg.channel === 'analysis') {
         if (msg.type === 'STREAM_START') {
+          activeStreamIdRef.current = msg.streamId || null;
           setIsStreamingAi(true);
           setStreamedText('');
           setStreamTokensCount(0);
-          setStreamStats({ startTime: Date.now(), chunks: 0 });
+          setStreamError(null);
+          startStreamWatchdog();
         } else if (msg.type === 'STREAM_CHUNK') {
-          if (msg.chunk) {
+          if (msg.streamId && msg.streamId === activeStreamIdRef.current && msg.chunk) {
             setStreamedText((prev) => prev + msg.chunk);
             setStreamTokensCount((prev) => prev + 1);
-            setStreamStats((prev) => (prev ? { ...prev, chunks: prev.chunks + 1 } : null));
           }
         } else if (msg.type === 'STREAM_COMPLETE') {
-          setIsStreamingAi(false);
-          if (msg.fullText) {
-            setStreamedText(msg.fullText);
+          if (msg.streamId && msg.streamId === activeStreamIdRef.current) {
+            clearStreamWatchdog();
+            setIsStreamingAi(false);
+            if (msg.fullText) {
+              setStreamedText(msg.fullText);
+            }
           }
         } else if (msg.type === 'STREAM_ERROR') {
-          setIsStreamingAi(false);
+          if (msg.streamId && msg.streamId === activeStreamIdRef.current) {
+            clearStreamWatchdog();
+            setIsStreamingAi(false);
+            setStreamError(msg.error || 'El stream de IA finalizó con un error desconocido.');
+          }
         }
       }
     });
 
     return () => {
+      clearStreamWatchdog();
       unsubStatus();
       unsubMessages();
+      // This component is the only consumer of the shared client: close the socket
+      // instead of leaving it reconnecting forever in the background.
+      wsClient.disconnect();
     };
   }, []);
 
   const handleStartAiStream = () => {
-    if (!isConnected) {
-      wsClient.connect();
-    }
     setIsStreamingAi(true);
     setStreamedText('');
     setStreamTokensCount(0);
-    setStreamStats({ startTime: Date.now(), chunks: 0 });
+    setStreamError(null);
+    startStreamWatchdog();
 
-    wsClient.requestAiStream(aiPrompt, selectedModel);
+    // send() queues the frame while the handshake is still in progress and flushes it
+    // on open, so calling connect() here cannot make the request get lost.
+    if (!wsClient.isConnectedNow()) {
+      wsClient.connect();
+    }
+    const accepted = wsClient.requestAiStream(aiPrompt, selectedModel);
+    if (!accepted) {
+      clearStreamWatchdog();
+      setIsStreamingAi(false);
+      setStreamError('No hay conexión con el gateway WebSocket. Pulsa Conectar e inténtalo de nuevo.');
+    }
   };
 
   const handleSendCustomTelemetry = () => {
@@ -144,9 +197,11 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
   };
 
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(id);
-    setTimeout(() => setCopiedKey(null), 2000);
+    copyTextToClipboard(text).then((copied) => {
+      if (!copied) return;
+      setCopiedKey(id);
+      setTimeout(() => setCopiedKey(null), 2000);
+    });
   };
 
   const filteredMessages =
@@ -325,7 +380,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-[10px] text-slate-400">
-                  <span>Tokens recibidos: <strong className="text-white">{streamTokensCount}</strong></span>
+                  <span>Chunks recibidos: <strong className="text-white">{streamTokensCount}</strong></span>
                   {streamedText && (
                     <button
                       onClick={() => copyToClipboard(streamedText, 'streamout')}
@@ -348,6 +403,16 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                   <span className="inline-block w-2 h-4 bg-amber-400 ml-1 animate-pulse"></span>
                 )}
               </div>
+
+              {streamError && (
+                <div
+                  className="mt-2 p-2.5 rounded-lg bg-red-950/60 border border-red-800/70 text-red-200 text-[11px] font-mono flex items-start gap-2 animate-fade-in"
+                  role="alert"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
+                  <span>{streamError}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -458,20 +523,20 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
           </div>
 
           {/* Terminal Logs List */}
-          <div className="mt-3 flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-[11px]">
+          <div ref={terminalRef} className="mt-3 flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-[11px]">
             {filteredMessages.length === 0 ? (
               <div className="text-slate-500 italic p-4 text-center">
                 Esperando tramas por el canal WebSocket...
               </div>
             ) : (
-              filteredMessages.map((msg, idx) => {
+              filteredMessages.map((msg) => {
                 const isTelemetry = msg.channel === 'telemetry';
                 const isAnalysis = msg.channel === 'analysis';
                 const isSystem = msg.channel === 'system';
 
                 return (
                   <div
-                    key={idx}
+                    key={msg.__id}
                     className="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80 hover:border-slate-700 transition"
                   >
                     <div className="flex items-center justify-between gap-1 mb-1">
@@ -524,7 +589,6 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                 );
               })
             )}
-            <div ref={messagesEndRef} />
           </div>
         </div>
       </div>
@@ -609,9 +673,9 @@ import websockets
 
 WS_URL = "${wsUrl}"
 
-async def listen_pyrowatch_stream():
+async def listen_natureintelligence_stream():
     async with websockets.connect(WS_URL) as ws:
-        print(f"[*] Conectado al Stream PyroWatch Valle: {WS_URL}")
+        print(f"[*] Conectado al Stream NatureIntelligence: {WS_URL}")
         
         # 1. Suscribirse a canales específicos (o 'all')
         sub_msg = {
@@ -641,7 +705,7 @@ async def listen_pyrowatch_stream():
                 print(f"\\n[IoT Cali] {sensor.get('name')}: PM2.5={sensor.get('pm25')} µg/m³ Viento={sensor.get('windSpeed')} km/h")
 
 if __name__ == "__main__":
-    asyncio.run(listen_pyrowatch_stream())
+    asyncio.run(listen_natureintelligence_stream())
 `;
   }
 
@@ -652,7 +716,7 @@ import WebSocket from 'ws';
 const ws = new WebSocket('${wsUrl}');
 
 ws.on('open', () => {
-  console.log('[*] Conectado al WebSocket PyroWatch Valle');
+  console.log('[*] Conectado al WebSocket NatureIntelligence');
 
   // Suscribirse a canales
   ws.send(JSON.stringify({

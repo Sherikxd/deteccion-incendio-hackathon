@@ -1,28 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Radio,
   Flame,
   Activity,
   AlertTriangle,
-  ShieldAlert,
   Send,
   Wifi,
   WifiOff,
   Copy,
   Check,
   ExternalLink,
-  RotateCcw,
-  Sparkles,
   Terminal,
-  Clock,
-  Compass,
-  Wind,
   CheckCircle2,
   BellRing,
   Filter,
   Play,
   Square
 } from 'lucide-react';
+import { copyTextToClipboard } from '../utils/copyToClipboard';
 
 interface StreamLiveChannelProps {
   currentIncidentTitle?: string;
@@ -35,6 +29,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [activeListeners, setActiveListeners] = useState<number>(1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   // Custom alert trigger form state
   const [customSector, setCustomSector] = useState<string>('Cerro de las Tres Cruces (Sector Bataclán)');
@@ -43,11 +38,33 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
     'Frente de fuego activo con avance acelerado hacia el Ecoparque Bataclán'
   );
   const [customFrp, setCustomFrp] = useState<number>(145);
-  const [customWind, setCustomWind] = useState<number>(32);
+  // El disparador de prueba envía siempre 32 km/h (no hay controlador que lo modifique)
+  const [customWind] = useState<number>(32);
   const [isTriggering, setIsTriggering] = useState<boolean>(false);
 
   const eventSourceRef = useRef<EventSource | null>(null);
-  const eventsBottomRef = useRef<HTMLDivElement>(null);
+  const feedRef = useRef<HTMLDivElement>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    if (!isMountedRef.current) return;
+    setToastMessage(message);
+    setToastType(type);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 3500);
+  };
 
   // Connect to the real /stream endpoint via native EventSource
   useEffect(() => {
@@ -73,17 +90,9 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
       setIsConnected(true);
     };
 
-    // Generic messages
-    es.onmessage = (event) => {
-      try {
-        const parsed = JSON.parse(event.data);
-        handleIncomingPacket('message', parsed);
-      } catch (e) {
-        console.error('Error parsing SSE event data', e);
-      }
-    };
-
-    // Specific SSE event listeners
+    // Named SSE events (contract: docs/04-API-REFERENCE.md)
+    // `connected` / `initial_alerts` are emitted directly by GET /stream,
+    // the rest are the canonical per-channel event names emitted by broadcastToChannel.
     es.addEventListener('connected', (event: any) => {
       try {
         const parsed = JSON.parse(event.data);
@@ -109,20 +118,6 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
       try {
         const parsed = JSON.parse(event.data);
         handleIncomingPacket('alert', parsed);
-      } catch (e) {}
-    });
-
-    es.addEventListener('emergency_alert', (event: any) => {
-      try {
-        const parsed = JSON.parse(event.data);
-        handleIncomingPacket('alert', parsed);
-      } catch (e) {}
-    });
-
-    es.addEventListener('telemetry', (event: any) => {
-      try {
-        const parsed = JSON.parse(event.data);
-        handleIncomingPacket('telemetry', parsed);
       } catch (e) {}
     });
 
@@ -155,6 +150,8 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
       },
       ...prev.slice(0, 99)
     ]);
+    // Newest events are prepended, so keep the viewport pinned to the top of the feed
+    feedRef.current?.scrollTo({ top: 0 });
   };
 
   const handleDisconnect = () => {
@@ -170,9 +167,11 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
   };
 
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(id);
-    setTimeout(() => setCopiedKey(null), 2000);
+    copyTextToClipboard(text).then((copied) => {
+      if (!copied) return;
+      setCopiedKey(id);
+      setTimeout(() => setCopiedKey(null), 2000);
+    });
   };
 
   // Trigger test alert to /stream via POST
@@ -204,11 +203,20 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
       });
 
       if (res.ok) {
-        setToastMessage('¡Alerta transmitida en tiempo real al canal /stream!');
-        setTimeout(() => setToastMessage(null), 3500);
+        showToast('¡Alerta transmitida en tiempo real al canal /stream!', 'success');
+      } else {
+        let detail = `HTTP ${res.status}`;
+        try {
+          const err = await res.json();
+          detail = err.error || detail;
+        } catch (e) {
+          // non-JSON error body
+        }
+        showToast(`No se pudo transmitir la alerta: ${detail}`, 'error');
       }
     } catch (e) {
       console.error(e);
+      showToast('Error de red al transmitir la alerta a /stream', 'error');
     } finally {
       setIsTriggering(false);
     }
@@ -330,8 +338,19 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-3 bg-emerald-950/90 border border-emerald-700 rounded-xl text-emerald-200 text-xs flex items-center gap-2 shadow-xl animate-fade-in">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div
+          className={`p-3 rounded-xl text-xs flex items-center gap-2 shadow-xl animate-fade-in border ${
+            toastType === 'error'
+              ? 'bg-red-950/90 border-red-700 text-red-200'
+              : 'bg-emerald-950/90 border-emerald-700 text-emerald-200'
+          }`}
+          role="status"
+        >
+          {toastType === 'error' ? (
+            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          )}
           <span>{toastMessage}</span>
         </div>
       )}
@@ -355,7 +374,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
             </button>
           </div>
 
-          <div className="mt-3 flex-1 overflow-y-auto space-y-2.5 pr-1">
+          <div ref={feedRef} className="mt-3 flex-1 overflow-y-auto space-y-2.5 pr-1">
             {events.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-slate-800 rounded-xl">
                 <Wifi className="w-8 h-8 text-slate-600 mb-2 animate-bounce" />
@@ -369,7 +388,6 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
                 const isAlert = evt.data?.data?.type === 'EMERGENCY_ALERT' || evt.data?.alert || evt.eventType === 'alert';
                 const alertData = evt.data?.data?.alert || evt.data?.alert;
                 const isTelemetry = evt.data?.channel === 'telemetry' || evt.data?.data?.type === 'SENSOR_UPDATE';
-                const isConnectedEvt = evt.eventType === 'connected';
 
                 if (isAlert && alertData) {
                   return (
@@ -473,7 +491,6 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
                 );
               })
             )}
-            <div ref={eventsBottomRef} />
           </div>
         </div>
 

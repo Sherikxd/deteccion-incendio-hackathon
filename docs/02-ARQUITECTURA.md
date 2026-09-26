@@ -50,7 +50,7 @@ Cualquier nodo IoT en campo (ESP32 con módem 4G/LTE, módulo LoRaWAN o estació
            │
            │ HTTP POST /api/sensors/ingest
            ▼
-[ PyroWatch Backend (server.ts) ]
+[ NatureIntelligence Backend (server.ts) ]
            │
            ├─► Actualiza estado en memoria de la estación
            └─► Emite evento SSE "sensor_update" a todos los clientes conectados
@@ -82,7 +82,7 @@ Cualquier nodo IoT en campo (ESP32 con módem 4G/LTE, módulo LoRaWAN o estació
 | **Soporte Nativo** | `new EventSource('/stream')` en navegador | `new WebSocket('/ws')` |
 | **Reconexión** | Automática por el navegador | Manual o con librerías |
 | **Atravesamiento Proxies** | 100% sobre HTTP/1.1 y HTTP/2 estándar | Requiere soporte de `Connection: Upgrade` |
-| **Uso en PyroWatch** | Consumo de alertas y telemetría continua | Comandos interactivos y telemetría ascendente |
+| **Uso en NatureIntelligence** | Consumo de alertas y telemetría continua | Comandos interactivos y telemetría ascendente |
 
 ---
 

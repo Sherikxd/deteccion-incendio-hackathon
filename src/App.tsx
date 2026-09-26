@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MOCK_INCIDENTS } from './data/mockIncidents';
 import { FireIncidentScenario, IoTSensorNode, AIVerificationResult } from './types/fire';
 import { MapViewer } from './components/MapViewer';
@@ -15,29 +15,24 @@ import { WhatsAppBotDispatcher } from './components/WhatsAppBotDispatcher';
 import { SensorsMetricsDashboard } from './components/SensorsMetricsDashboard';
 import { SandboxTestingPanel } from './components/SandboxTestingPanel';
 import { AIFilteredAlertsHub } from './components/AIFilteredAlertsHub';
+import { StreamLiveChannel } from './components/StreamLiveChannel';
+import { WebSocketStreamStudio } from './components/WebSocketStreamStudio';
+import { PromptEngineeringStudio } from './components/PromptEngineeringStudio';
+import { FireSpreadSimulator } from './components/FireSpreadSimulator';
+import { StreamApiDocumentation } from './components/StreamApiDocumentation';
+import { ArchitectureDocs } from './components/ArchitectureDocs';
 import {
   Flame,
   Radio,
-  Satellite,
   Layers,
-  Sparkles,
   MapPin,
-  ChevronDown,
-  Activity,
-  Wind,
   Code2,
-  Send,
-  BellRing,
-  ExternalLink,
-  Zap,
   Camera,
   MessageSquare,
-  TrendingUp,
-  Cpu,
-  CheckCircle2,
   FlaskConical,
   Gauge,
-  Brain
+  Brain,
+  Zap
 } from 'lucide-react';
 
 export default function App() {
@@ -47,7 +42,9 @@ export default function App() {
   const [systemMode, setSystemMode] = useState<'real' | 'simulation'>('real');
 
   // Subtabs within Real Data Mode
-  const [realDataTab, setRealDataTab] = useState<'map' | 'ai_decisions' | 'sensors' | 'cameras' | 'whatsapp' | 'api'>('map');
+  const [realDataTab, setRealDataTab] = useState<
+    'map' | 'ai_decisions' | 'sensors' | 'cameras' | 'whatsapp' | 'stream' | 'ws' | 'api'
+  >('map');
 
   const [selectedSensor, setSelectedSensor] = useState<IoTSensorNode | undefined>(undefined);
   const [lastVerificationResult, setLastVerificationResult] = useState<AIVerificationResult | null>(null);
@@ -73,7 +70,7 @@ export default function App() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-base font-bold font-mono tracking-wider text-white">
-                  PYROWATCH<span className="text-amber-400 font-extrabold">.VALLE</span>
+                  NATURE <span className="text-amber-400 font-extrabold">INTELLIGENCE</span>
                 </h1>
                 <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                   CALI EN VIVO
@@ -193,6 +190,33 @@ export default function App() {
               </button>
 
               <button
+                onClick={() => setRealDataTab('stream')}
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
+                  realDataTab === 'stream'
+                    ? 'bg-amber-600 text-white shadow'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Radio className="w-3 h-3 text-red-400 shrink-0" />
+                <span className="hidden sm:inline">Canal en Vivo (/stream SSE)</span>
+                <span className="sm:hidden">En vivo</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
+              </button>
+
+              <button
+                onClick={() => setRealDataTab('ws')}
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
+                  realDataTab === 'ws'
+                    ? 'bg-amber-600 text-white shadow'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Zap className="w-3 h-3 text-amber-300 shrink-0" />
+                <span className="hidden sm:inline">Estudio WebSocket IA</span>
+                <span className="sm:hidden">WebSocket</span>
+              </button>
+
+              <button
                 onClick={() => setRealDataTab('api')}
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'api'
@@ -270,7 +294,10 @@ export default function App() {
             )}
 
             {realDataTab === 'ai_decisions' && (
-              <AIFilteredAlertsHub />
+              <div className="space-y-4">
+                <AIFilteredAlertsHub />
+                <PromptEngineeringStudio currentIncident={currentIncident} />
+              </div>
             )}
 
             {realDataTab === 'sensors' && (
@@ -285,8 +312,20 @@ export default function App() {
               <WhatsAppBotDispatcher />
             )}
 
+            {realDataTab === 'stream' && (
+              <StreamLiveChannel currentIncidentTitle={currentIncident.title} />
+            )}
+
+            {realDataTab === 'ws' && (
+              <WebSocketStreamStudio currentIncident={currentIncident} />
+            )}
+
             {realDataTab === 'api' && (
-              <ApiIntegrationHub />
+              <div className="space-y-4">
+                <ApiIntegrationHub />
+                <StreamApiDocumentation />
+                <ArchitectureDocs />
+              </div>
             )}
           </div>
         )}
@@ -295,13 +334,16 @@ export default function App() {
         {/* MODE 2: DATOS SIMULADOS / PRUEBAS        */}
         {/* ========================================= */}
         {systemMode === 'simulation' && (
-          <SandboxTestingPanel />
+          <div className="space-y-4">
+            <SandboxTestingPanel />
+            <FireSpreadSimulator />
+          </div>
         )}
       </main>
 
       {/* Clean Footer */}
       <footer className="border-t border-slate-900 bg-slate-950 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] px-4 text-center text-xs text-slate-500 font-mono">
-        PyroWatch Valle • Santiago de Cali & Valle del Cauca • Monitoreo Real vs Sandbox de Pruebas • Canal <code className="text-cyan-400 font-semibold">/stream</code>
+        NatureIntelligence • Santiago de Cali & Valle del Cauca • Monitoreo Real vs Sandbox de Pruebas • Canal <code className="text-cyan-400 font-semibold">/stream</code>
       </footer>
     </div>
   );

@@ -1,7 +1,7 @@
 # ============================================================
-# PyroWatch Valle — Dockerfile de producción (multi-stage)
-# Build:  docker build -t pyrowatch .
-# Run:    docker run -d -p 3000:3000 -e OPENROUTER_API_KEY=sk-... pyrowatch
+# NatureIntelligence — Dockerfile de producción (multi-stage)
+# Build:  docker build -t natureintelligence .
+# Run:    docker run -d -p 3000:3000 -e OPENROUTER_API_KEY=sk-... natureintelligence
 # ============================================================
 
 # ---------- Etapa 1: compilación del frontend (Vite) ----------

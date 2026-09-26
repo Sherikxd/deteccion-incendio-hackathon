@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Flame,
   Wind,
   Compass,
   Layers,
-  Sparkles,
   Play,
-  RotateCcw,
   CheckCircle2,
   AlertTriangle,
-  Clock,
   Send,
-  MapPin,
   TrendingUp,
   Activity
 } from 'lucide-react';
+
+interface SpreadServerResult {
+  rateOfSpreadMetersPerMinute: number;
+  rateOfSpreadKmPerHour: number;
+  flameLengthMeters: number;
+  timeToUrbanPerimeterMinutes: number;
+  isochronesEstimated: Record<string, number>;
+}
 
 export const FireSpreadSimulator: React.FC = () => {
   // Simulator Parameters
@@ -23,7 +27,34 @@ export const FireSpreadSimulator: React.FC = () => {
   const [slopeDeg, setSlopeDeg] = useState<number>(30); // Degrees
   const [fuelMoisture, setFuelMoisture] = useState<'EXTREME' | 'HIGH' | 'MODERATE'>('EXTREME'); // Dryness
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
+  const [isBroadcasting, setIsBroadcasting] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+  // Authoritative result returned by POST /api/simulate/spread (server-side Rothermel)
+  const [serverResult, setServerResult] = useState<SpreadServerResult | null>(null);
+  const [modelError, setModelError] = useState<string | null>(null);
+
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    if (!isMountedRef.current) return;
+    setToastMessage(message);
+    setToastType(type);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 4000);
+  };
 
   // Rothermel-based tactical calculations
   // Rate of spread factor based on wind and slope
@@ -42,13 +73,36 @@ export const FireSpreadSimulator: React.FC = () => {
   const distanceToHomesM = 1400;
   const timeToUrbanMin = Math.round(distanceToHomesM / rateOfSpreadMpm);
 
-  const handleRunSimulation = () => {
+  // ESE blows from the valley towards the cordillera: the front is pushed AWAY from the
+  // urban perimeter, so the ETA to the city does not apply for that vector.
+  const threatensUrbanPerimeter = windDirection !== 'ESE';
+
+  const handleRunSimulation = async () => {
     setIsSimulating(true);
-    setTimeout(() => {
+    setModelError(null);
+    try {
+      const res = await fetch('/api/simulate/spread', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ windSpeed, slopeDeg, fuelMoisture, windDirection })
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || `HTTP ${res.status}`);
+      }
+      setServerResult(data.results as SpreadServerResult);
+      showToast(
+        `Modelo del servidor: ROS ${data.results.rateOfSpreadMetersPerMinute} m/min · ${
+          data.results.timeToUrbanPerimeterMinutes ?? 'n/a'
+        } min hasta cota urbana`
+      );
+    } catch (e: any) {
+      setServerResult(null);
+      setModelError(e?.message || 'No se pudo ejecutar el modelo de propagación en el servidor');
+      showToast('No se pudo ejecutar el modelo de propagación', 'error');
+    } finally {
       setIsSimulating(false);
-      setToastMessage('¡Simulación completada! Se calcularon las isócronas a 15, 30, 45 y 60 minutos.');
-      setTimeout(() => setToastMessage(null), 4000);
-    }, 600);
+    }
   };
 
   const handleApplyPreset = (preset: 'extreme' | 'moderate' | 'calm') => {
@@ -71,29 +125,55 @@ export const FireSpreadSimulator: React.FC = () => {
   };
 
   const handleBroadcastSimulation = async () => {
+    if (isBroadcasting) return;
+    setIsBroadcasting(true);
     try {
-      await fetch('/api/alerts', {
+      const alertPayload = {
+        sector: 'Cerro de las Tres Cruces (Escenario Simulado)',
+        riskLevel: rateOfSpreadKmh > 1.5 ? 'CRITICAL' : 'HIGH',
+        headline: threatensUrbanPerimeter
+          ? `SIMULACIÓN TÁCTICA: Avance a ${rateOfSpreadKmh.toFixed(2)} km/h con alcance a cota urbana en ${timeToUrbanMin} min.`
+          : `SIMULACIÓN TÁCTICA: Avance a ${rateOfSpreadKmh.toFixed(2)} km/h con viento ${windDirection} hacia la cordillera (sin avance hacia la cota urbana).`,
+        frpMw: 165.0,
+        windSpeedKmh: windSpeed,
+        windDirection,
+        threatenedAssets: threatensUrbanPerimeter
+          ? ['Ecoparque Bataclán (15 min)', 'Barrio Juanambú (cota urbana)', 'Antenas de telecomunicaciones cima']
+          : ['Cordillera Occidental / masas forestales', 'Antenas de telecomunicaciones cima'],
+        tacticalAction: `Despliegue simulado de 3 máquinas de bomberos y cortafuegos en cota 1100m.`
+      };
+
+      const res = await fetch('/api/alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(alertPayload)
+      });
+      const alertData = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(alertData?.error || `HTTP ${res.status}`);
+      }
+
+      // Emit the dispatch event too: the toast below claims a WhatsApp dispatch, so
+      // actually trigger it (the endpoint is a local simulation by design).
+      const waRes = await fetch('/api/whatsapp/dispatch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sector: 'Cerro de las Tres Cruces (Escenario Simulado)',
-          riskLevel: rateOfSpreadKmh > 1.5 ? 'CRITICAL' : 'HIGH',
-          headline: `SIMULACIÓN TÁCTICA: Avance a ${rateOfSpreadKmh.toFixed(2)} km/h con alcance a cota urbana en ${timeToUrbanMin} min.`,
-          frpMw: 165.0,
-          windSpeedKmh: windSpeed,
-          windDirection,
-          threatenedAssets: [
-            'Ecoparque Bataclán (15 min)',
-            'Barrio Juanambú (cota urbana)',
-            'Antenas de telecomunicaciones cima'
-          ],
-          tacticalAction: `Despliegue simulado de 3 máquinas de bomberos y cortafuegos en cota 1100m.`
+          recipientGroup: 'Central X-1 Bomberos Cali',
+          sector: alertPayload.sector,
+          riskLevel: alertPayload.riskLevel,
+          headline: alertPayload.headline
         })
       });
-      setToastMessage('¡Escenario simulado transmitido al canal /stream y Bot de WhatsApp!');
-      setTimeout(() => setToastMessage(null), 4000);
-    } catch (e) {
-      console.error(e);
+      if (!waRes.ok) {
+        throw new Error(`Despacho WhatsApp: HTTP ${waRes.status}`);
+      }
+
+      showToast('Escenario transmitido al canal /stream y despacho WhatsApp (simulado) emitido');
+    } catch (e: any) {
+      showToast(`No se pudo transmitir el escenario: ${e?.message || 'error de red'}`, 'error');
+    } finally {
+      setIsBroadcasting(false);
     }
   };
 
@@ -226,8 +306,19 @@ export const FireSpreadSimulator: React.FC = () => {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-3 bg-emerald-950/90 border border-emerald-700 rounded-xl text-emerald-200 text-xs flex items-center gap-2 shadow-xl animate-fade-in">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div
+          className={`p-3 rounded-xl text-xs flex items-center gap-2 shadow-xl animate-fade-in border ${
+            toastType === 'error'
+              ? 'bg-red-950/90 border-red-700 text-red-200'
+              : 'bg-emerald-950/90 border-emerald-700 text-emerald-200'
+          }`}
+          role="status"
+        >
+          {toastType === 'error' ? (
+            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          )}
           <span>{toastMessage}</span>
         </div>
       )}
@@ -313,17 +404,45 @@ export const FireSpreadSimulator: React.FC = () => {
               disabled={isSimulating}
               className="flex-1 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs font-mono transition flex items-center justify-center gap-1.5"
             >
-              <Play className="w-3.5 h-3.5 fill-white" />
-              <span>{isSimulating ? 'Recalculando Frentes...' : 'Ejecutar Modelo de Propagación'}</span>
+              {isSimulating ? (
+                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              ) : (
+                <Play className="w-3.5 h-3.5 fill-white" />
+              )}
+              <span>{isSimulating ? 'Ejecutando Rothermel en el servidor...' : 'Ejecutar Modelo de Propagación'}</span>
             </button>
             <button
               onClick={handleBroadcastSimulation}
-              className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs font-mono transition flex items-center gap-1.5"
+              disabled={isBroadcasting}
+              className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs font-mono transition flex items-center gap-1.5 disabled:opacity-60"
             >
-              <Send className="w-3.5 h-3.5" />
+              {isBroadcasting ? (
+                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              ) : (
+                <Send className="w-3.5 h-3.5" />
+              )}
               <span>Enviar a WhatsApp Bot</span>
             </button>
           </div>
+
+          {/* Server-side model feedback */}
+          {modelError && (
+            <div
+              className="p-2.5 rounded-lg bg-red-950/60 border border-red-800/70 text-red-200 text-[11px] font-mono flex items-start gap-2 animate-fade-in"
+              role="alert"
+            >
+              <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
+              <span>{modelError}</span>
+            </div>
+          )}
+
+          {serverResult && !modelError && (
+            <div className="p-2.5 rounded-lg bg-purple-950/40 border border-purple-800/60 text-[11px] font-mono text-purple-200">
+              <span className="font-bold text-purple-300">Resultado del servidor (POST /api/simulate/spread):</span>{' '}
+              ROS {serverResult.rateOfSpreadMetersPerMinute} m/min ({serverResult.rateOfSpreadKmPerHour} km/h) · llama{' '}
+              {serverResult.flameLengthMeters} m · cota urbana en {serverResult.timeToUrbanPerimeterMinutes ?? 'n/a'} min
+            </div>
+          )}
         </div>
 
         {/* Right: Tactical Metrics & Impact Timeline (5 cols) */}
@@ -351,40 +470,69 @@ export const FireSpreadSimulator: React.FC = () => {
           </div>
 
           {/* Urban Impact Alert Box */}
-          <div className="bg-red-950/40 p-3 rounded-xl border border-red-800/60 text-xs font-mono space-y-1">
-            <div className="flex items-center gap-1.5 text-red-300 font-bold">
-              <AlertTriangle className="w-4 h-4 text-red-400" />
-              <span>Tiempo Estimado de Impacto Urbano:</span>
+          {threatensUrbanPerimeter ? (
+            <div className="bg-red-950/40 p-3 rounded-xl border border-red-800/60 text-xs font-mono space-y-1">
+              <div className="flex items-center gap-1.5 text-red-300 font-bold">
+                <AlertTriangle className="w-4 h-4 text-red-400" />
+                <span>Tiempo Estimado de Impacto Urbano:</span>
+              </div>
+              <div className="text-white text-sm font-extrabold">
+                {timeToUrbanMin} minutos hasta cota residencial
+              </div>
+              <p className="text-[11px] text-slate-300 font-sans leading-relaxed">
+                Basado en pendiente de {slopeDeg}° y ráfagas continuas de {windSpeed} km/h ({windDirection}) empujando
+                hacia Ecoparque Bataclán y sector Juanambú.
+              </p>
             </div>
-            <div className="text-white text-sm font-extrabold">
-              {timeToUrbanMin} minutos hasta cota residencial
+          ) : (
+            <div className="bg-cyan-950/40 p-3 rounded-xl border border-cyan-800/60 text-xs font-mono space-y-1">
+              <div className="flex items-center gap-1.5 text-cyan-300 font-bold">
+                <Wind className="w-4 h-4 text-cyan-400" />
+                <span>Sin amenaza directa a la cota urbana:</span>
+              </div>
+              <div className="text-white text-sm font-extrabold">
+                Viento {windDirection} → hacia la cordillera
+              </div>
+              <p className="text-[11px] text-slate-300 font-sans leading-relaxed">
+                El vector {windDirection} arrastra el frente y el humo hacia el interior de la Cordillera Occidental, en
+                lugar de hacia Juanambú / Bataclán. Riesgo de impacto urbano por humo: bajo en este escenario.
+              </p>
             </div>
-            <p className="text-[11px] text-slate-300 font-sans leading-relaxed">
-              Basado en pendiente de {slopeDeg}° y ráfagas continuas de {windSpeed} km/h empujando hacia Ecoparque Bataclán y sector Juanambú.
-            </p>
-          </div>
+          )}
 
-          {/* Chronological Impact Timeline */}
+          {/* Chronological Impact Timeline (derived from the computed ETA) */}
           <div className="space-y-1.5 text-xs font-mono">
             <span className="text-[10px] text-slate-400 uppercase font-semibold">
-              Cronograma de Amenazas Inminentes:
+              {threatensUrbanPerimeter ? 'Cronograma estimado de amenazas:' : 'Avance estimado del frente:'}
             </span>
-            <div className="p-2 rounded bg-slate-950 border border-slate-800 flex justify-between text-[11px]">
-              <span className="text-yellow-400 font-bold">A los 15 min:</span>
-              <span className="text-slate-200">Senderos Ecoparque Bataclán</span>
-            </div>
-            <div className="p-2 rounded bg-slate-950 border border-slate-800 flex justify-between text-[11px]">
-              <span className="text-amber-400 font-bold">A los 30 min:</span>
-              <span className="text-slate-200">Antenas de Telecomunicaciones</span>
-            </div>
-            <div className="p-2 rounded bg-slate-950 border border-slate-800 flex justify-between text-[11px]">
-              <span className="text-red-400 font-bold">A los 45 min:</span>
-              <span className="text-slate-200">Barrio Juanambú (Comuna 2)</span>
-            </div>
-            <div className="p-2 rounded bg-slate-950 border border-slate-800 flex justify-between text-[11px]">
-              <span className="text-purple-400 font-bold">A los 60 min:</span>
-              <span className="text-slate-200">Avenida 6ta y Granada (Humo Severo)</span>
-            </div>
+            {(threatensUrbanPerimeter
+              ? [
+                  { at: Math.max(1, Math.round(timeToUrbanMin * 0.25)), label: 'Senderos Ecoparque Bataclán', tone: 'text-yellow-400' },
+                  { at: Math.max(1, Math.round(timeToUrbanMin * 0.5)), label: 'Antenas de Telecomunicaciones', tone: 'text-amber-400' },
+                  { at: Math.max(1, Math.round(timeToUrbanMin * 0.75)), label: 'Barrio Juanambú (Comuna 2)', tone: 'text-red-400' },
+                  { at: Math.max(1, timeToUrbanMin), label: 'Avenida 6ta y Granada (Humo Severo)', tone: 'text-purple-400' }
+                ]
+              : [
+                  { at: Math.max(1, Math.round(timeToUrbanMin * 0.25)), label: 'Ladera occidental del Cerro Tres Cruces', tone: 'text-cyan-400' },
+                  { at: Math.max(1, Math.round(timeToUrbanMin * 0.5)), label: 'Cresta y antenas de la cima', tone: 'text-cyan-300' },
+                  { at: Math.max(1, timeToUrbanMin), label: 'Interfaz de bosque hacia la cordillera', tone: 'text-emerald-400' }
+                ])
+            .map((step) => (
+              <div
+                key={step.label}
+                className="p-2 rounded bg-slate-950 border border-slate-800 flex justify-between text-[11px]"
+              >
+                <span className={`${step.tone} font-bold`}>A los {step.at} min:</span>
+                <span className="text-slate-200">{step.label}</span>
+              </div>
+            ))}
+            <p className="text-[10px] text-slate-500 font-sans leading-relaxed pt-1">
+              Hitos escalados sobre el ETA calculado (
+              {threatensUrbanPerimeter
+                ? `${timeToUrbanMin} min a la cota urbana con viento ${windDirection}`
+                : `${timeToUrbanMin} min al ritmo de propagación con viento ${windDirection} hacia la cordillera`}
+              ).
+            </p>
           </div>
         </div>
       </div>

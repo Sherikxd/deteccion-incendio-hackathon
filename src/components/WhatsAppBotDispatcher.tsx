@@ -174,7 +174,7 @@ export const WhatsAppBotDispatcher: React.FC = () => {
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-semibold text-sm text-slate-100">
-                  PyroWatch Valle • Despacho Bomberos Cali
+                  NatureIntelligence • Despacho Bomberos Cali
                 </span>
                 <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 text-black flex items-center justify-center text-[9px] font-bold">
                   ✓

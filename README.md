@@ -1,8 +1,8 @@
-# 🔥 PyroWatch Valle
+# 🔥 NatureIntelligence
 
 **Detección temprana de incendios forestales y verificación con IA en tiempo real para Santiago de Cali y el Valle del Cauca.**
 
-PyroWatch Valle es una plataforma que combina telemetría satelital (NASA FIRMS/VIIRS, NOAA GOES-16), una red de estaciones IoT en las laderas de Cali, cámaras térmicas PTZ con visión artificial y un motor de decisiones con inteligencia artificial. Su objetivo: detectar focos de incendio, verificarlos contra falsos positivos y transmitir alertas al instante a los centros de despacho —sin movilizar recursos innecesarios.
+NatureIntelligence es una plataforma que combina telemetría satelital (NASA FIRMS/VIIRS, NOAA GOES-16), una red de estaciones IoT en las laderas de Cali, cámaras térmicas PTZ con visión artificial y un motor de decisiones con inteligencia artificial. Su objetivo: detectar focos de incendio, verificarlos contra falsos positivos y transmitir alertas al instante a los centros de despacho —sin movilizar recursos innecesarios.
 
 ## ✨ Características principales
 
@@ -24,11 +24,34 @@ cp .env.example .env   # agrega tu OPENROUTER_API_KEY
 npm run dev            # http://localhost:3000
 ```
 
+## 🧪 Verificación
+
+```bash
+npm run check   # typecheck (tsc) + suite de tests
+npm test        # sólo tests (vitest run)
+npm run test:watch
+```
+
+La suite (`tests/`) cubre:
+
+| Archivo | Qué verifica |
+| :--- | :--- |
+| `sseEvents.test.ts` | Contrato de nombres de evento SSE (alert / sensor_update / analysis / incident_update). |
+| `server.test.ts` | Arranca el servidor real y valida SSE en vivo, `/api/simulate/spread`, `/api/alerts` y `/stream/alerts`. |
+| `websocketService.test.ts` | Cola de salida durante el handshake, `send()` booleano y cierre manual sin reconexión. |
+| `streamLiveChannel.test.tsx` | Suscripciones SSE del cliente, pintado de alertas/telemetría y errores del POST `/stream`. |
+| `webSocketStreamStudio.test.tsx` | Filtrado por `streamId`, errores de stream y cierre del socket al desmontar. |
+| `fireSpreadSimulator.test.tsx` | Modelo real en el servidor, viento ESE sin amenaza urbana y despacho WhatsApp. |
+| `promptEngineeringStudio.test.tsx` | Toggles de reglas opcionales y payload inyectado (`buildUserPrompt`). |
+| `masterFirePrompt.test.ts` | Marcadores del prompt y snippets TS/Python. |
+| `copyToClipboard.test.ts` | Fallback de portapapeles fuera de contexto seguro. |
+| `snippets.test.ts` | Que todos los snippets copiables de la UI compilan (Python, TS, Go, Node, navegador). |
+
 ## 🐳 Despliegue con Docker
 
 ```bash
-docker build -t pyrowatch .
-docker run -d -p 3000:3000 -e OPENROUTER_API_KEY=sk-... pyrowatch
+docker build -t natureintelligence .
+docker run -d -p 3000:3000 -e OPENROUTER_API_KEY=sk-... natureintelligence
 ```
 
 ## 📚 Documentación

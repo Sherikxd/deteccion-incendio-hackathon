@@ -8,3 +8,5 @@ coverage/
 *.log
 .env*
 !.env.example
+# artefacto temporal del test tests/snippets.test.ts
+src/__snippet_check.ts

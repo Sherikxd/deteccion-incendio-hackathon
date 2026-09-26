@@ -19,6 +19,7 @@ import {
   Wifi,
   ExternalLink
 } from 'lucide-react';
+import { copyTextToClipboard } from '../utils/copyToClipboard';
 
 interface SensorItem {
   id: string;
@@ -91,9 +92,11 @@ export const SensorsMetricsDashboard: React.FC = () => {
   const selectedSensor = sensors.find((s) => s.id === selectedSensorId) || sensors[0];
 
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(id);
-    setTimeout(() => setCopiedKey(null), 2000);
+    copyTextToClipboard(text).then((copied) => {
+      if (!copied) return;
+      setCopiedKey(id);
+      setTimeout(() => setCopiedKey(null), 2000);
+    });
   };
 
   const handleSendTestReading = async () => {

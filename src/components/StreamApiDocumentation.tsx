@@ -6,28 +6,22 @@ import {
   Copy,
   Check,
   Server,
-  Layers,
   Flame,
-  Radio,
   Activity,
-  ExternalLink,
-  ShieldAlert,
-  Cpu,
-  Wifi,
-  Database,
-  ArrowRight,
-  CheckCircle2,
-  FileText
+  Wifi
 } from 'lucide-react';
+import { copyTextToClipboard } from '../utils/copyToClipboard';
 
 export const StreamApiDocumentation: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<'curl' | 'javascript' | 'python' | 'nodejs' | 'golang'>('curl');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(id);
-    setTimeout(() => setCopiedKey(null), 2000);
+    copyTextToClipboard(text).then((copied) => {
+      if (!copied) return;
+      setCopiedKey(id);
+      setTimeout(() => setCopiedKey(null), 2000);
+    });
   };
 
   const currentHost = typeof window !== 'undefined' ? window.location.host : 'localhost:3000';
@@ -179,10 +173,14 @@ export const StreamApiDocumentation: React.FC = () => {
               <tr className="hover:bg-slate-800/40">
                 <td className="py-2.5 px-3 text-emerald-400 font-bold">GET</td>
                 <td className="py-2.5 px-3 text-white font-bold">/stream</td>
-                <td className="py-2.5 px-3 text-amber-300">?channel=alerts|telemetry|all</td>
+                <td className="py-2.5 px-3 text-amber-300">?channel=alerts|telemetry|incidents|analysis|all</td>
                 <td className="py-2.5 px-3 text-cyan-300">HTTP SSE</td>
                 <td className="py-2.5 px-3 font-sans">
-                  Abre un canal de eventos unidireccional permanente. Envía alertas de incendios y telemetría de Cali.
+                  Abre un canal de eventos unidireccional permanente. Emite{' '}
+                  <code className="text-amber-300">event: alert</code>,{' '}
+                  <code className="text-amber-300">event: sensor_update</code> y{' '}
+                  <code className="text-amber-300">event: analysis</code> (más <code>connected</code> e{' '}
+                  <code>initial_alerts</code> al conectar).
                 </td>
               </tr>
               <tr className="hover:bg-slate-800/40">
@@ -233,6 +231,13 @@ export const StreamApiDocumentation: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/50 text-[11px] text-amber-200 font-sans leading-relaxed">
+          <strong className="font-mono text-amber-300">Límites operativos:</strong> las solicitudes <code>POST</code>{' '}
+          comparten un límite de <strong>60 por minuto e IP</strong> (respuesta <code className="font-mono">429</code>) y
+          el canal SSE admite hasta <strong>250 escuchas simultáneas</strong> (respuesta{' '}
+          <code className="font-mono">503</code>). Los cuerpos JSON se limitan a 256 kB.
+        </div>
       </div>
 
       {/* Data Model / JSON Payload Specification */}
@@ -258,7 +263,7 @@ export const StreamApiDocumentation: React.FC = () => {
       "alertId": "ALR-CALI-2026-8901",
       "sector": "Cerro de las Tres Cruces & Bataclán",
       "region": "Santiago de Cali / Ladera Noroccidental",
-      "riskLevel": "CRITICAL", // CRITICAL | HIGH | MODERATE | LOW
+      "riskLevel": "CRITICAL",
       "category": "WILDFIRE",
       "headline": "Incendio con avance rápido a Bataclán",
       "windSpeedKmh": 32,
@@ -276,6 +281,14 @@ export const StreamApiDocumentation: React.FC = () => {
   }
 }`}
           </pre>
+          <p className="text-[11px] text-slate-500 font-sans leading-relaxed">
+            <code className="text-amber-300 font-mono">riskLevel</code>:{' '}
+            <span className="font-mono">CRITICAL | HIGH | MODERATE | LOW</span> ·{' '}
+            <code className="text-amber-300 font-mono">category</code>:{' '}
+            <span className="font-mono">WILDFIRE | SMOLDERING | AGRICULTURAL_BURN | WEATHER_WARNING | INDUSTRIAL</span>
+            {'. El evento SSE se emite como '}
+            <code className="text-cyan-300 font-mono">event: alert</code>.
+          </p>
         </div>
 
         {/* Telemetry JSON Schema */}
@@ -299,25 +312,32 @@ export const StreamApiDocumentation: React.FC = () => {
       "id": "iot-cali-tres-cruces-01",
       "name": "Estación CVC-01 Mirador Tres Cruces",
       "location": "Cali Ladera Noroccidental (1465 msnm)",
-      "pm25": 284.5,          // µg/m³ Material Particulado Humo
-      "co": 22.8,             // ppm Monóxido de Carbono
-      "temp": 34.2,           // Grados Celsius
-      "humidity": 18,         // % Humedad Relativa
-      "windSpeed": 32.4,      // km/h
-      "windDir": "WNW",       // Dirección Viento del Pacífico
-      "flame": true,          // Sensor óptico infrarrojo
-      "status": "critical"    // critical | elevated | normal
+      "pm25": 284.5,
+      "co": 22.8,
+      "temp": 34.2,
+      "humidity": 18,
+      "windSpeed": 32.4,
+      "windDir": "WNW",
+      "flame": true,
+      "status": "critical"
     }
   }
 }`}
           </pre>
+          <p className="text-[11px] text-slate-500 font-sans leading-relaxed">
+            Unidades: <span className="font-mono">pm25</span> µg/m³ · <span className="font-mono">co</span> ppm ·{' '}
+            <span className="font-mono">temp</span> °C · <span className="font-mono">humidity</span> % ·{' '}
+            <span className="font-mono">windSpeed</span> km/h.{' '}
+            <span className="font-mono">status</span>: critical | elevated | normal. El evento SSE se emite como{' '}
+            <code className="text-cyan-300 font-mono">event: sensor_update</code>.
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-function getCodeSnippet(lang: string, streamUrl: string, wsUrl: string) {
+export function getCodeSnippet(lang: string, streamUrl: string, wsUrl: string) {
   if (lang === 'curl') {
     return `# 1. Conectarse y escuchar el flujo en vivo de ALERTAS con cURL:
 curl -N -H "Accept: text/event-stream" "${streamUrl}?channel=alerts"
@@ -352,13 +372,19 @@ const eventSource = new EventSource(streamUrl);
 // 1. Confirmación de conexión inicial
 eventSource.addEventListener('connected', (event) => {
   const status = JSON.parse(event.data);
-  console.log('[*] Conectado a PyroWatch Valle /stream:', status);
+  console.log('[*] Conectado a NatureIntelligence /stream:', status);
 });
 
 // 2. Escuchar alertas de incendios forestales
+// (en este canal también llegan eventos de tipo AI_FILTERING_DECISION o
+//  WHATSAPP_DISPATCH_TRIGGERED, que no traen un bloque "alert")
 eventSource.addEventListener('alert', (event) => {
   const packet = JSON.parse(event.data);
-  const alert = packet.data.alert;
+  const alert = packet.data && packet.data.alert;
+  if (!alert) {
+    console.log('[EVENTO /stream]', packet.data && packet.data.type, packet.data);
+    return;
+  }
   
   console.warn(\`🚨 ALERTA [\${alert.riskLevel}]: \${alert.sector}\`);
   console.log('Titular:', alert.headline);
@@ -390,6 +416,9 @@ def listen_to_fire_alerts():
     
     # stream=True mantiene la conexión HTTP abierta indefinidamente
     response = requests.get(STREAM_URL, stream=True, headers={"Accept": "text/event-stream"})
+    if not response.ok:
+        # 429 = límite de solicitudes, 503 = cupo SSE agotado
+        raise SystemExit(f"[!] Error al abrir el stream: HTTP {response.status_code}")
     
     for raw_line in response.iter_lines():
         if not raw_line:
@@ -404,7 +433,10 @@ def listen_to_fire_alerts():
                 
                 # Alerta de emergencia recibida
                 if packet.get("channel") == "alerts":
-                    alert = packet.get("data", {}).get("alert", {})
+                    alert = packet.get("data", {}).get("alert") or {}
+                    if not alert:
+                        # Otros eventos del canal (AI_FILTERING_DECISION, etc.)
+                        continue
                     print(f"\\n🔥 [ALERTA {alert.get('riskLevel')}] {alert.get('sector')}")
                     print(f"   Titular:  {alert.get('headline')}")
                     print(f"   Potencia: {alert.get('frpMw')} MW | Viento: {alert.get('windSpeedKmh')} km/h")
@@ -418,15 +450,20 @@ if __name__ == "__main__":
   }
 
   if (lang === 'nodejs') {
-    return `// Node.js (v18+ con fetch nativo o usando eventsource)
+    return `// Node.js (v18+ con fetch nativo)
 const streamUrl = '${streamUrl}';
 
 async function monitorCaliFireStream() {
-  console.log('[*] Iniciando cliente Node.js para PyroWatch /stream...');
+  console.log('[*] Iniciando cliente Node.js para NatureIntelligence /stream...');
   
   const response = await fetch(streamUrl, {
     headers: { 'Accept': 'text/event-stream' }
   });
+
+  // El gateway devuelve 429 si se supera el límite de solicitudes o 503 si no hay cupo SSE
+  if (!response.ok) {
+    throw new Error(\`No se pudo abrir el stream: HTTP \${response.status}\`);
+  }
 
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
@@ -441,11 +478,15 @@ async function monitorCaliFireStream() {
     buffer = lines.pop() || '';
 
     for (const line of lines) {
-      if (line.startsWith('data: ')) {
+      // Ignora líneas de comentario SSE (p. ej. ": keepalive 1712345") y "event: ..."
+      if (!line.startsWith('data: ')) continue;
+      try {
         const data = JSON.parse(line.slice(6));
-        if (data.channel === 'alerts') {
+        if (data.channel === 'alerts' && data.data?.alert) {
           console.log('[ALERTA CALI]', data.data.alert.sector, '-', data.data.alert.headline);
         }
+      } catch (err) {
+        // Trama parcial o no JSON: no romper el bucle de lectura
       }
     }
   }
@@ -490,7 +531,7 @@ func main() {
 		if strings.HasPrefix(line, "data: ") {
 			jsonData := strings.TrimPrefix(line, "data: ")
 			var packet map[string]interface{}
-			if err := json.Unmarshal([]byte(jsonData), &packet); == nil {
+			if err := json.Unmarshal([]byte(jsonData), &packet); err == nil {
 				fmt.Printf("[EVENTO SSE] %v\\n", packet)
 			}
 		}

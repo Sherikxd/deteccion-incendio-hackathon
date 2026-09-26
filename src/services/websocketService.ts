@@ -19,11 +19,18 @@ class WebSocketClient {
   private pingStartTime: number = 0;
   private isConnected: boolean = false;
   private subscribedChannels: StreamChannel[] = ['all'];
+  // Messages sent while the socket is still CONNECTING are queued and flushed on open,
+  // otherwise ws.send() silently drops them (readyState !== OPEN).
+  private outboundQueue: string[] = [];
+  // Distinguishes a deliberate disconnect() from a network drop, so the auto-reconnect
+  // loop does not resurrect a socket the user/app intentionally closed.
+  private manuallyClosed: boolean = false;
 
   public connect() {
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
       return;
     }
+    this.manuallyClosed = false;
 
     try {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -40,6 +47,8 @@ class WebSocketClient {
           type: 'subscribe',
           channels: this.subscribedChannels
         });
+        // Flush anything that was queued while the handshake was in progress
+        this.flushOutboundQueue();
       };
 
       this.ws.onmessage = (event) => {
@@ -57,6 +66,10 @@ class WebSocketClient {
 
       this.ws.onclose = () => {
         this.cleanup();
+        // Anything still queued was never flushed: the handshake failed, so don't
+        // replay stale frames on a future reconnect.
+        this.outboundQueue = [];
+        if (this.manuallyClosed) return;
         this.scheduleReconnect();
       };
 
@@ -93,12 +106,31 @@ class WebSocketClient {
     }, 10000);
   }
 
-  public send(data: any) {
+  public send(data: any): boolean {
+    const json = JSON.stringify(data);
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify(data));
+      this.ws.send(json);
+      return true;
+    }
+    if (this.ws && this.ws.readyState === WebSocket.CONNECTING) {
+      this.outboundQueue.push(json);
       return true;
     }
     return false;
+  }
+
+  private flushOutboundQueue() {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+    const pending = this.outboundQueue.splice(0, this.outboundQueue.length);
+    pending.forEach((json) => {
+      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(json);
+      }
+    });
+  }
+
+  public isConnectedNow(): boolean {
+    return this.isConnected && this.ws?.readyState === WebSocket.OPEN;
   }
 
   public setSubscribedChannels(channels: StreamChannel[]) {
@@ -142,8 +174,10 @@ class WebSocketClient {
   }
 
   public disconnect() {
+    this.manuallyClosed = true;
     if (this.reconnectTimeout) clearTimeout(this.reconnectTimeout);
     if (this.pingInterval) clearInterval(this.pingInterval);
+    this.outboundQueue = [];
     if (this.ws) {
       this.ws.close();
       this.ws = null;

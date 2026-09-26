@@ -1,6 +1,6 @@
 # Operación segura de la demo
 
-PyroWatch Valle mantiene dos tipos de comportamiento:
+NatureIntelligence mantiene dos tipos de comportamiento:
 
 - **Datos de demostración:** sensores, cámaras y escenarios locales que permiten mostrar la interfaz y probar el flujo de alertas.
 - **Datos externos:** payloads enviados por integraciones autorizadas a los endpoints REST o al canal `/stream`.

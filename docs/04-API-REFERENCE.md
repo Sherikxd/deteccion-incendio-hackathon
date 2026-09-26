@@ -1,6 +1,6 @@
 # 📡 Referencia Completa de la API & Endpoints
 
-La API de **PyroWatch Valle** es compatible con HTTP/1.1 y HTTP/2, y cuenta con **CORS universal (`Access-Control-Allow-Origin: *`)** para consumo directo desde cualquier navegador, frontend web, backend o microcontrolador físico.
+La API de **NatureIntelligence** es compatible con HTTP/1.1 y HTTP/2, y cuenta con **CORS universal (`Access-Control-Allow-Origin: *`)** para consumo directo desde cualquier navegador, frontend web, backend o microcontrolador físico.
 
 ---
 
@@ -15,6 +15,8 @@ La API de **PyroWatch Valle** es compatible con HTTP/1.1 y HTTP/2, y cuenta con 
 | `GET` | **`/api/sensors`** | REST JSON | Lista de estaciones IoT terrestres con sus métricas en vivo. |
 | `POST` | **`/api/sensors/ingest`** | REST JSON | Ingesta telemetría directa desde hardware físico (ESP32, Arduino, LoRaWAN). |
 | `POST` | **`/api/simulate/event`** | REST JSON | Inyecta escenarios simulados en el Sandbox de pruebas. |
+| `POST` | **`/api/simulate/spread`** | REST JSON | Modelo Rothermel de propagación (ROS, llama, ETA a la cota urbana). |
+| `GET` | **`/stream/alerts`** | REST JSON | Snapshot JSON de las alertas almacenadas en memoria. |
 | `POST` | **`/api/whatsapp/dispatch`**| REST JSON | Dispara notificación del bot de WhatsApp a la Central de Bomberos. |
 | `GET` | **`/api/goes16`** | REST JSON | Detecciones térmicas del satélite geoestacionario NOAA GOES-16. |
 | `GET` | **`/api/cameras`** | REST JSON | Estado y detecciones de visión artificial (YOLOv8) en cámaras térmicas PTZ. |
@@ -37,9 +39,18 @@ curl -N -H "Accept: text/event-stream" "https://<tu-app-url>/stream?channel=all"
 ```
 
 ### Eventos Emitidos:
-- **`event: connected`**: Saludo con ID de sesión y clientes activos.
-- **`event: alert`**: Notificación de incendio detectado o verificado.
-- **`event: sensor_update`**: Actualización de telemetría de una estación IoT.
+
+El nombre del evento (`event:`) es **estable por canal**, y el tipo concreto de mensaje viaja dentro de `data.type`:
+
+- **`event: connected`**: Saludo con ID de sesión y clientes activos (emisión directa al conectar).
+- **`event: initial_alerts`**: Snapshot de alertas recientes al suscribirse.
+- **`event: alert`** (canal `alerts`): Notificación de incendio detectado o verificado (`data.type`: `EMERGENCY_ALERT`, `AI_FILTERING_DECISION`, `WHATSAPP_DISPATCH_TRIGGERED`, ...).
+- **`event: sensor_update`** (canal `telemetry`): Actualización de telemetría de una estación IoT (`data.type`: `SENSOR_UPDATE`).
+- **`event: analysis`** (canal `analysis`): Salida del verificador IA en streaming (`data.type`: `STREAM_START`, `STREAM_CHUNK`, `STREAM_COMPLETE`, `STREAM_ERROR`).
+- **`event: incident_update`** (canal `incidents`): Cambios de estado de los escenarios monitorizados.
+- **`event: <canal>`** para cualquier otro canal definido.
+
+> Los `POST` del gateway comparten un límite de **60/min por IP** (`429`) y el canal SSE admite hasta **250 escuchas simultáneas** (`503`).
 
 ---
 
@@ -196,6 +207,51 @@ curl -X POST "https://<tu-app-url>/api/simulate/event" \
   -H "Content-Type: application/json" \
   -d '{"scenario": "CRITICAL_FIRE_TRES_CRUCES"}'
 ```
+
+---
+
+## 3b. Modelo de Propagación Rothermel: `POST /api/simulate/spread`
+
+Calcula velocidad de avance superficial (ROS), longitud de llama y ETA hasta la cota urbana con el modelo Rothermel. Es el endpoint que consume el simulador del Sandbox.
+
+#### Petición:
+```bash
+curl -X POST "https://<tu-app-url>/api/simulate/spread" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "windSpeed": 32,
+    "slopeDeg": 30,
+    "fuelMoisture": "EXTREME",
+    "windDirection": "WNW"
+  }'
+```
+
+- `windSpeed`: km/h (`0`–`250`). `slopeDeg`: grados (`0`–`60`).
+- `fuelMoisture`: `EXTREME` (`1.8`) | `HIGH` (`1.3`) | `MODERATE` (`0.8`) — factores de combustible idénticos a los del simulador web.
+- `windDirection` (opcional): solo se refleja en `inputs`; el modelo es direccionalmente agnóstico.
+
+#### Respuesta (200):
+```json
+{
+  "success": true,
+  "model": "Rothermel Wildfire Spread (Surface Model)",
+  "inputs": { "windSpeed": 32, "slopeDeg": 30, "fuelMoisture": "EXTREME" },
+  "results": {
+    "rateOfSpreadMetersPerMinute": 113.9,
+    "rateOfSpreadKmPerHour": 6.83,
+    "flameLengthMeters": 2.6,
+    "timeToUrbanPerimeterMinutes": 12,
+    "isochronesEstimated": {
+      "min15Meters": 1709,
+      "min30Meters": 3417,
+      "min45Meters": 5126,
+      "min60Meters": 6834
+    }
+  }
+}
+```
+
+Devuelve `422` si `fuelMoisture` no es un valor admitido.
 
 ---
 

@@ -17,6 +17,7 @@ import {
   BookOpen,
   FileText
 } from 'lucide-react';
+import { copyTextToClipboard } from '../utils/copyToClipboard';
 
 export const ApiIntegrationHub: React.FC = () => {
   const [selectedLang, setSelectedLang] = useState<'python' | 'javascript' | 'curl'>('python');
@@ -29,9 +30,11 @@ export const ApiIntegrationHub: React.FC = () => {
   const [testLatency, setTestLatency] = useState<number | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(id);
-    setTimeout(() => setCopiedKey(null), 2000);
+    copyTextToClipboard(text).then((copied) => {
+      if (!copied) return;
+      setCopiedKey(id);
+      setTimeout(() => setCopiedKey(null), 2000);
+    });
   };
 
   const host = typeof window !== 'undefined' ? window.location.host : 'localhost:3000';
