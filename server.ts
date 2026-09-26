@@ -4,7 +4,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { sseEventName } from './src/server/sseEvents';
+import { sseEventName } from './src/server/sseEvents.js';
 
 dotenv.config();
 
