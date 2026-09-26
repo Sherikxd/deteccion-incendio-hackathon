@@ -76,11 +76,11 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
   });
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-2xl text-slate-100 flex flex-col space-y-4">
+    <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm text-neutral-100 flex flex-col space-y-4">
       {/* Studio Header */}
-      <div className="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800 gap-3">
+      <div className="flex flex-wrap items-center justify-between pb-3 border-b border-neutral-800 gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow">
+          <div className="p-2 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow">
             <Cpu className="w-5 h-5" />
           </div>
           <div>
@@ -90,20 +90,20 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
                 PRODUCCIÓN OPENROUTER
               </span>
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-neutral-400">
               Diseñado para Claude 3.5 Sonnet, GPT-4o y Llama 3.3 con fusión NASA FIRMS + IoT + Copernicus
             </p>
           </div>
         </div>
 
         {/* Section Tabs */}
-        <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+        <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs">
           <button
             onClick={() => setActiveSection('system')}
             className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
               activeSection === 'system'
                 ? 'bg-amber-600 text-white shadow'
-                : 'text-slate-400 hover:text-white'
+                : 'text-neutral-400 hover:text-white'
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
@@ -114,7 +114,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
               activeSection === 'user_injected'
                 ? 'bg-amber-600 text-white shadow'
-                : 'text-slate-400 hover:text-white'
+                : 'text-neutral-400 hover:text-white'
             }`}
           >
             <Database className="w-3.5 h-3.5" />
@@ -125,7 +125,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
               activeSection === 'code_ts'
                 ? 'bg-amber-600 text-white shadow'
-                : 'text-slate-400 hover:text-white'
+                : 'text-neutral-400 hover:text-white'
             }`}
           >
             <Code2 className="w-3.5 h-3.5" />
@@ -136,7 +136,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
               activeSection === 'code_py'
                 ? 'bg-amber-600 text-white shadow'
-                : 'text-slate-400 hover:text-white'
+                : 'text-neutral-400 hover:text-white'
             }`}
           >
             <Terminal className="w-3.5 h-3.5" />
@@ -148,9 +148,9 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
       {/* Main Content Area based on tab */}
       {activeSection === 'system' && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between bg-slate-950/80 p-3 rounded-lg border border-slate-800 gap-3 flex-wrap">
-            <div className="text-xs text-slate-300">
-              <span className="font-semibold text-amber-300 font-mono">Reglas Clave del Prompt:</span> Fusión FIRMS + IoT downwind, descarte de falsos positivos (quemas/industrias), estimación de propagación y salida JSON estricta.
+          <div className="flex items-center justify-between bg-neutral-950/80 p-3 rounded-lg border border-neutral-800 gap-3 flex-wrap">
+            <div className="text-xs text-neutral-300">
+              <span className="font-semibold text-amber-400 font-mono">Reglas Clave del Prompt:</span> Fusión FIRMS + IoT downwind, descarte de falsos positivos (quemas/industrias), estimación de propagación y salida JSON estricta.
             </div>
             <button
               onClick={() => copyToClipboard(effectiveSystemPrompt, 'system_prompt')}
@@ -158,7 +158,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             >
               {copiedKey === 'system_prompt' ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-200" />
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
                   <span>¡Copiado al Portapapeles!</span>
                 </>
               ) : (
@@ -171,10 +171,10 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
           </div>
 
           {/* Optional rule blocks toggled into the system prompt */}
-          <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono">
-            <span className="text-slate-400 uppercase text-[10px] font-semibold">Reglas opcionales:</span>
+          <div className="bg-neutral-950/70 p-3 rounded-lg border border-neutral-800 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono">
+            <span className="text-neutral-400 uppercase text-[10px] font-semibold">Reglas opcionales:</span>
 
-            <label className="flex items-center gap-2 text-slate-300 cursor-pointer select-none">
+            <label className="flex items-center gap-2 text-neutral-300 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={includeAgriculturalRule}
@@ -184,7 +184,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
               Zonificación agrícola (caña)
             </label>
 
-            <label className="flex items-center gap-2 text-slate-300 cursor-pointer select-none">
+            <label className="flex items-center gap-2 text-neutral-300 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={includeIndustrialRule}
@@ -194,7 +194,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
               Polígono industrial
             </label>
 
-            <label className="flex items-center gap-2 text-slate-300 cursor-pointer select-none">
+            <label className="flex items-center gap-2 text-neutral-300 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={includeCapAlerts}
@@ -204,7 +204,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
               Formato CAP / SMS 160 car.
             </label>
 
-            <span className="text-[10px] text-slate-500 ml-auto">
+            <span className="text-[10px] text-neutral-400 ml-auto">
               {[
                 includeAgriculturalRule,
                 includeIndustrialRule,
@@ -215,7 +215,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
           </div>
 
           <div className="relative">
-            <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-slate-200 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">
+            <pre className="p-4 bg-neutral-950 rounded-md border border-neutral-800 text-xs font-mono text-neutral-200 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">
               {effectiveSystemPrompt}
             </pre>
           </div>
@@ -224,9 +224,9 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
 
       {activeSection === 'user_injected' && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between bg-slate-950/80 p-3 rounded-lg border border-slate-800">
-            <div className="text-xs text-slate-300">
-              Datos reales del incidente seleccionado: <strong className="text-amber-300">{currentIncident.title}</strong>
+          <div className="flex items-center justify-between bg-neutral-950/80 p-3 rounded-lg border border-neutral-800">
+            <div className="text-xs text-neutral-300">
+              Datos reales del incidente seleccionado: <strong className="text-amber-400">{currentIncident.title}</strong>
             </div>
             <button
               onClick={() => copyToClipboard(injectedUserPrompt, 'injected_prompt')}
@@ -234,7 +234,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             >
               {copiedKey === 'injected_prompt' ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-200" />
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
                   <span>¡Copiado!</span>
                 </>
               ) : (
@@ -247,7 +247,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
           </div>
 
           <div className="relative">
-            <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-emerald-300/90 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">
+            <pre className="p-4 bg-neutral-950 rounded-md border border-neutral-800 text-xs font-mono text-emerald-400/90 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">
               {injectedUserPrompt}
             </pre>
           </div>
@@ -256,9 +256,9 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
 
       {activeSection === 'code_ts' && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between bg-slate-950/80 p-3 rounded-lg border border-slate-800">
-            <div className="text-xs text-slate-300">
-              <span className="font-semibold text-emerald-400 font-mono">Backend Express / TypeScript:</span> Mantiene <code className="text-amber-300">OPENROUTER_API_KEY</code> en el servidor protegido (nunca en el frontend). <code className="text-amber-300">FIRMS_MAP_KEY</code> debe residir igual en variables de entorno cuando se conecte la API de FIRMS.
+          <div className="flex items-center justify-between bg-neutral-950/80 p-3 rounded-lg border border-neutral-800">
+            <div className="text-xs text-neutral-300">
+              <span className="font-semibold text-emerald-500 font-mono">Backend Express / TypeScript:</span> Mantiene <code className="text-amber-400">OPENROUTER_API_KEY</code> en el servidor protegido (nunca en el frontend). <code className="text-amber-400">FIRMS_MAP_KEY</code> debe residir igual en variables de entorno cuando se conecte la API de FIRMS.
             </div>
             <button
               onClick={() => copyToClipboard(OPENROUTER_INTEGRATION_CODE_TS, 'code_ts')}
@@ -266,7 +266,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             >
               {copiedKey === 'code_ts' ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-200" />
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
                   <span>¡Código Copiado!</span>
                 </>
               ) : (
@@ -278,7 +278,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             </button>
           </div>
 
-          <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-cyan-300 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">
+          <pre className="p-4 bg-neutral-950 rounded-md border border-neutral-800 text-xs font-mono text-neutral-300 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">
             {OPENROUTER_INTEGRATION_CODE_TS}
           </pre>
         </div>
@@ -286,9 +286,9 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
 
       {activeSection === 'code_py' && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between bg-slate-950/80 p-3 rounded-lg border border-slate-800">
-            <div className="text-xs text-slate-300">
-              <span className="font-semibold text-sky-400 font-mono">Backend Python:</span> Módulo reutilizable con biblioteca <code className="text-amber-300">requests</code> y manejo determinista a <code className="text-amber-300">temperature=0.1</code>.
+          <div className="flex items-center justify-between bg-neutral-950/80 p-3 rounded-lg border border-neutral-800">
+            <div className="text-xs text-neutral-300">
+              <span className="font-semibold text-neutral-400 font-mono">Backend Python:</span> Módulo reutilizable con biblioteca <code className="text-amber-400">requests</code> y manejo determinista a <code className="text-amber-400">temperature=0.1</code>.
             </div>
             <button
               onClick={() => copyToClipboard(OPENROUTER_INTEGRATION_CODE_PY, 'code_py')}
@@ -296,7 +296,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             >
               {copiedKey === 'code_py' ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-200" />
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
                   <span>¡Código Copiado!</span>
                 </>
               ) : (
@@ -308,7 +308,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             </button>
           </div>
 
-          <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-amber-200 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">
+          <pre className="p-4 bg-neutral-950 rounded-md border border-neutral-800 text-xs font-mono text-amber-300 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">
             {OPENROUTER_INTEGRATION_CODE_PY}
           </pre>
         </div>

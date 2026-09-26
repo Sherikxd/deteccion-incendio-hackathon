@@ -217,17 +217,17 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
   return (
     <div className="space-y-4">
       {/* Top Banner: WebSocket Server Status & Config */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-neutral-800">
           <div className="flex items-center gap-3">
             <div
-              className={`p-2.5 rounded-xl border flex items-center justify-center ${
+              className={`p-2.5 rounded-md border flex items-center justify-center ${
                 isConnected
-                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30'
                   : 'bg-red-500/10 text-red-400 border-red-500/30'
               }`}
             >
-              {isConnected ? <Wifi className="w-5 h-5 animate-pulse" /> : <WifiOff className="w-5 h-5" />}
+              {isConnected ? <Wifi className="w-5 h-5" /> : <WifiOff className="w-5 h-5" />}
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -237,33 +237,33 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                 <span
                   className={`text-[11px] font-mono px-2 py-0.5 rounded font-semibold ${
                     isConnected
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                       : 'bg-red-500/20 text-red-300 border border-red-500/30'
                   }`}
                 >
                   {isConnected ? 'EN LÍNEA (STREAM ACTIVO)' : 'RECONECTANDO'}
                 </span>
                 {latency !== undefined && (
-                  <span className="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-mono text-neutral-400 bg-neutral-800 px-1.5 py-0.5 rounded">
                     Ping: {latency} ms
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-neutral-400">
                 Gateway de transmisión en tiempo real con OpenRouter AI para integración con apps móviles, GIS y bomberos.
               </p>
             </div>
           </div>
 
           {/* Connection URL Bar */}
-          <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+          <div className="flex items-center gap-2 bg-neutral-950 p-1.5 rounded-lg border border-neutral-800">
             <Server className="w-3.5 h-3.5 text-amber-400 ml-1" />
-            <code className="text-xs font-mono text-amber-300 px-1">{currentWsUrl}</code>
+            <code className="text-xs font-mono text-amber-400 px-1">{currentWsUrl}</code>
             <button
               onClick={() => copyToClipboard(currentWsUrl, 'wsurl')}
-              className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] flex items-center gap-1 transition"
+              className="px-2 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-[11px] flex items-center gap-1 transition"
             >
-              {copiedKey === 'wsurl' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              {copiedKey === 'wsurl' ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
               <span>{copiedKey === 'wsurl' ? 'Copiado' : 'Copiar URL'}</span>
             </button>
           </div>
@@ -272,8 +272,8 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
         {/* Channel Filter Selector */}
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-1.5">
-            <Filter className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-slate-400 font-mono text-[11px]">Canales de Transmisión:</span>
+            <Filter className="w-3.5 h-3.5 text-neutral-400" />
+            <span className="text-neutral-400 font-mono text-[11px]">Canales de Transmisión:</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(['all', 'telemetry', 'incidents', 'analysis', 'alerts'] as StreamChannel[]).map((ch) => (
@@ -286,7 +286,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                 className={`px-2.5 py-1 rounded-md text-xs font-mono font-medium transition ${
                   selectedChannel === ch
                     ? 'bg-amber-600 text-white shadow'
-                    : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700/60'
+                    : 'bg-neutral-800/80 text-neutral-400 hover:text-white border border-neutral-700/60'
                 }`}
               >
                 #{ch}
@@ -300,31 +300,31 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left Column: Live OpenRouter AI Stream through WebSocket (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-4 shadow-sm flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-100 font-mono">
+                  <h3 className="font-bold text-sm text-neutral-100 font-mono">
                     Canal #analysis — Stream IA con OpenRouter
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-neutral-400">
                     Ejecuta inferencia y transmite chunks token a token por WebSocket
                   </p>
                 </div>
               </div>
 
               {/* Model Selector */}
-              <div className="flex items-center gap-1 bg-slate-800/80 px-2 py-1 rounded-lg border border-slate-700 text-xs">
+              <div className="flex items-center gap-1 bg-neutral-800/80 px-2 py-1 rounded-lg border border-neutral-700 text-xs">
                 <select
                   value={selectedModel}
                   onChange={(e) => setSelectedModel(e.target.value)}
                   className="bg-transparent text-xs text-white focus:outline-none cursor-pointer"
                 >
                   {AVAILABLE_MODELS.map((m) => (
-                    <option key={m.id} value={m.id} className="bg-slate-900 text-white">
+                    <option key={m.id} value={m.id} className="bg-neutral-900 text-white">
                       {m.name}
                     </option>
                   ))}
@@ -334,27 +334,27 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
 
             {/* Prompt input */}
             <div className="mt-3 space-y-1.5">
-              <label className="text-[11px] font-mono text-slate-400">
+              <label className="text-[11px] font-mono text-neutral-400">
                 Instrucción Táctica para Inferencia Streaming:
               </label>
               <textarea
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 rows={2}
-                className="w-full bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-none font-mono"
+                className="w-full bg-neutral-950 p-2.5 rounded-lg border border-neutral-800 text-xs text-neutral-200 focus:outline-none focus:border-amber-500 resize-none font-mono"
               />
             </div>
 
             {/* Stream trigger button */}
             <div className="mt-2.5 flex items-center justify-between">
-              <span className="text-[11px] text-slate-400 font-mono">
+              <span className="text-[11px] text-neutral-400 font-mono">
                 Escenario actual: <span className="text-amber-400 font-semibold">{currentIncident.region}</span>
               </span>
 
               <button
                 onClick={handleStartAiStream}
                 disabled={isStreamingAi}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-500 hover:to-red-500 text-white font-semibold text-xs shadow-lg shadow-red-950/50 transition transform active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-sm  transition transform active:scale-95 disabled:opacity-50"
               >
                 {isStreamingAi ? (
                   <>
@@ -363,7 +363,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                   </>
                 ) : (
                   <>
-                    <Zap className="w-3.5 h-3.5 text-amber-200 fill-amber-200" />
+                    <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-200" />
                     <span>Iniciar Stream de Tokens</span>
                   </>
                 )}
@@ -371,42 +371,42 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
             </div>
 
             {/* Stream Output Window */}
-            <div className="mt-3 flex-1 min-h-[220px] bg-slate-950 rounded-xl border border-slate-800 p-3.5 flex flex-col font-mono text-xs">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-800/80 mb-2">
+            <div className="mt-3 flex-1 min-h-[220px] bg-neutral-950 rounded-md border border-neutral-800 p-3.5 flex flex-col font-mono text-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80 mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                  <span className="text-[11px] text-cyan-300 font-semibold uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-neutral-400"></span>
+                  <span className="text-[11px] text-neutral-300 font-semibold uppercase tracking-wide">
                     {isStreamingAi ? 'Flujo de Tokens Activo (OpenRouter SSE → WS)' : 'Buffer de Salida Stream'}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-[10px] text-slate-400">
+                <div className="flex items-center gap-3 text-[10px] text-neutral-400">
                   <span>Chunks recibidos: <strong className="text-white">{streamTokensCount}</strong></span>
                   {streamedText && (
                     <button
                       onClick={() => copyToClipboard(streamedText, 'streamout')}
                       className="hover:text-white flex items-center gap-1 text-[11px]"
                     >
-                      {copiedKey === 'streamout' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      {copiedKey === 'streamout' ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                       <span>Copiar</span>
                     </button>
                   )}
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto whitespace-pre-wrap text-slate-200 leading-relaxed font-sans text-xs max-h-[240px]">
+              <div className="flex-1 overflow-y-auto whitespace-pre-wrap text-neutral-200 leading-relaxed font-sans text-xs max-h-[240px]">
                 {streamedText || (
-                  <span className="text-slate-500 italic font-mono text-[11px]">
+                  <span className="text-neutral-400 italic font-mono text-[11px]">
                     Presiona "Iniciar Stream de Tokens" para emitir el diagnóstico en vivo a través del socket...
                   </span>
                 )}
                 {isStreamingAi && (
-                  <span className="inline-block w-2 h-4 bg-amber-400 ml-1 animate-pulse"></span>
+                  <span className="inline-block w-2 h-4 bg-amber-400 ml-1"></span>
                 )}
               </div>
 
               {streamError && (
                 <div
-                  className="mt-2 p-2.5 rounded-lg bg-red-950/60 border border-red-800/70 text-red-200 text-[11px] font-mono flex items-start gap-2 animate-fade-in"
+                  className="mt-2 p-2.5 rounded-lg bg-red-950/60 border border-red-800/70 text-red-300 text-[11px] font-mono flex items-start gap-2 animate-fade-in"
                   role="alert"
                 >
                   <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
@@ -417,17 +417,17 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
           </div>
 
           {/* Ingestion & Broadcast Simulator for External Applications */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-xl">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-4 shadow-sm">
+            <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                   <Activity className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-100 font-mono">
+                  <h3 className="font-bold text-sm text-neutral-100 font-mono">
                     Simulador de Ingestión Externa (Canal #telemetry)
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-neutral-400">
                     Transmite datos desde una aplicación externa hacia el WebSocket para que todos los clientes los reciban
                   </p>
                 </div>
@@ -435,39 +435,39 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
             </div>
 
             {sentPacketToast && (
-              <div className="mt-2.5 p-2 bg-emerald-950/90 border border-emerald-700/80 rounded-lg text-emerald-200 text-xs flex items-center gap-2 shadow">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <div className="mt-2.5 p-2 bg-emerald-950/90 border border-emerald-700/80 rounded-lg text-emerald-400 text-xs flex items-center gap-2 shadow">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                 <span>{sentPacketToast}</span>
               </div>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 mt-3">
               <div className="sm:col-span-2">
-                <label className="text-[10px] uppercase font-mono text-slate-400 block mb-1">
+                <label className="text-[10px] uppercase font-mono text-neutral-400 block mb-1">
                   Nombre Dispositivo / Sensor
                 </label>
                 <input
                   type="text"
                   value={customSensorName}
                   onChange={(e) => setCustomSensorName(e.target.value)}
-                  className="w-full bg-slate-950 px-2.5 py-1.5 rounded border border-slate-800 text-xs text-white font-mono"
+                  className="w-full bg-neutral-950 px-2.5 py-1.5 rounded border border-neutral-800 text-xs text-white font-mono"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] uppercase font-mono text-slate-400 block mb-1">
+                <label className="text-[10px] uppercase font-mono text-neutral-400 block mb-1">
                   PM2.5 Humo (µg/m³)
                 </label>
                 <input
                   type="number"
                   value={customPm25}
                   onChange={(e) => setCustomPm25(Number(e.target.value))}
-                  className="w-full bg-slate-950 px-2.5 py-1.5 rounded border border-slate-800 text-xs text-amber-300 font-mono"
+                  className="w-full bg-neutral-950 px-2.5 py-1.5 rounded border border-neutral-800 text-xs text-amber-400 font-mono"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] uppercase font-mono text-slate-400 block mb-1">
+                <label className="text-[10px] uppercase font-mono text-neutral-400 block mb-1">
                   Viento (km/h & Dir)
                 </label>
                 <div className="flex gap-1">
@@ -475,13 +475,13 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                     type="number"
                     value={customWindSpeed}
                     onChange={(e) => setCustomWindSpeed(Number(e.target.value))}
-                    className="w-16 bg-slate-950 px-2 py-1.5 rounded border border-slate-800 text-xs text-cyan-300 font-mono"
+                    className="w-16 bg-neutral-950 px-2 py-1.5 rounded border border-neutral-800 text-xs text-neutral-300 font-mono"
                   />
                   <input
                     type="text"
                     value={customWindDir}
                     onChange={(e) => setCustomWindDir(e.target.value)}
-                    className="w-16 bg-slate-950 px-2 py-1.5 rounded border border-slate-800 text-xs text-white font-mono"
+                    className="w-16 bg-neutral-950 px-2 py-1.5 rounded border border-neutral-800 text-xs text-white font-mono"
                   />
                 </div>
               </div>
@@ -500,21 +500,21 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
         </div>
 
         {/* Right Column: Live Stream Terminal & Frame Inspector (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col h-[560px] bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-xl">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="lg:col-span-5 flex flex-col h-[560px] bg-neutral-900/90 border border-neutral-800 rounded-md p-4 shadow-sm">
+          <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
             <div className="flex items-center gap-2">
               <Terminal className="w-4 h-4 text-amber-400" />
-              <h3 className="font-bold text-sm text-slate-100 font-mono">
+              <h3 className="font-bold text-sm text-neutral-100 font-mono">
                 Terminal de Tramas WebSocket
               </h3>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+              <span className="text-[10px] font-mono text-neutral-400 bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800">
                 {filteredMessages.length} tramas
               </span>
               <button
                 onClick={() => setMessages([])}
-                className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1 rounded hover:bg-neutral-800 text-neutral-400 hover:text-white"
                 title="Limpiar terminal"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -525,7 +525,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
           {/* Terminal Logs List */}
           <div ref={terminalRef} className="mt-3 flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-[11px]">
             {filteredMessages.length === 0 ? (
-              <div className="text-slate-500 italic p-4 text-center">
+              <div className="text-neutral-400 italic p-4 text-center">
                 Esperando tramas por el canal WebSocket...
               </div>
             ) : (
@@ -537,53 +537,53 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                 return (
                   <div
                     key={msg.__id}
-                    className="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80 hover:border-slate-700 transition"
+                    className="p-2.5 rounded-lg bg-neutral-950 border border-neutral-800/80 hover:border-neutral-700 transition"
                   >
                     <div className="flex items-center justify-between gap-1 mb-1">
                       <div className="flex items-center gap-1.5">
                         <span
                           className={`px-1.5 py-0.2 rounded text-[9px] uppercase font-bold ${
                             isTelemetry
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                              ? 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/30'
                               : isAnalysis
                               ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                               : isSystem
-                              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-                              : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                              ? 'bg-neutral-500/20 text-neutral-400 border border-neutral-500/30'
+                              : 'bg-neutral-500/20 text-neutral-400 border border-neutral-500/30'
                           }`}
                         >
                           #{msg.channel}
                         </span>
-                        <span className="text-slate-200 font-bold">{msg.type}</span>
+                        <span className="text-neutral-200 font-bold">{msg.type}</span>
                       </div>
-                      <span className="text-[10px] text-slate-500">
+                      <span className="text-[10px] text-neutral-400">
                         {new Date(msg.timestamp || Date.now()).toLocaleTimeString()}
                       </span>
                     </div>
 
                     {/* Preview details */}
                     {isTelemetry && msg.data?.sensor && (
-                      <div className="text-slate-300 text-[10px]">
+                      <div className="text-neutral-300 text-[10px]">
                         Sensor: <strong className="text-white">{msg.data.sensor.name}</strong> • PM2.5:{' '}
-                        <strong className="text-amber-300">{msg.data.sensor.pm25} µg/m³</strong> • Viento:{' '}
-                        <strong className="text-cyan-300">{msg.data.sensor.windSpeed} km/h {msg.data.sensor.windDir}</strong>
+                        <strong className="text-amber-400">{msg.data.sensor.pm25} µg/m³</strong> • Viento:{' '}
+                        <strong className="text-neutral-300">{msg.data.sensor.windSpeed} km/h {msg.data.sensor.windDir}</strong>
                       </div>
                     )}
 
                     {isAnalysis && msg.chunk && (
-                      <div className="text-slate-400 truncate text-[10px]">
-                        Chunk: <span className="text-amber-200">"{msg.chunk}"</span>
+                      <div className="text-neutral-400 truncate text-[10px]">
+                        Chunk: <span className="text-amber-300">"{msg.chunk}"</span>
                       </div>
                     )}
 
                     {isAnalysis && msg.type === 'STREAM_COMPLETE' && (
-                      <div className="text-emerald-400 text-[10px]">
+                      <div className="text-emerald-500 text-[10px]">
                         ✓ Transmisión completa ({msg.totalLength} bytes recibidos)
                       </div>
                     )}
 
                     {isSystem && msg.message && (
-                      <div className="text-cyan-300 text-[10px]">{msg.message}</div>
+                      <div className="text-neutral-300 text-[10px]">{msg.message}</div>
                     )}
                   </div>
                 );
@@ -594,20 +594,20 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
       </div>
 
       {/* Code Snippets for Developers & External Systems Integration */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800 gap-2">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-neutral-800 gap-2">
           <div className="flex items-center gap-2">
-            <Code2 className="w-4 h-4 text-cyan-400" />
-            <h3 className="font-bold text-sm text-slate-100 font-mono">
+            <Code2 className="w-4 h-4 text-neutral-400" />
+            <h3 className="font-bold text-sm text-neutral-100 font-mono">
               Integración con Otras Aplicaciones (SDK / Snippets)
             </h3>
           </div>
 
-          <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs font-mono">
             <button
               onClick={() => setCodeLanguage('python')}
               className={`px-3 py-1 rounded transition ${
-                codeLanguage === 'python' ? 'bg-amber-600 text-white' : 'text-slate-400 hover:text-white'
+                codeLanguage === 'python' ? 'bg-amber-600 text-white' : 'text-neutral-400 hover:text-white'
               }`}
             >
               Python
@@ -615,7 +615,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
             <button
               onClick={() => setCodeLanguage('nodejs')}
               className={`px-3 py-1 rounded transition ${
-                codeLanguage === 'nodejs' ? 'bg-amber-600 text-white' : 'text-slate-400 hover:text-white'
+                codeLanguage === 'nodejs' ? 'bg-amber-600 text-white' : 'text-neutral-400 hover:text-white'
               }`}
             >
               Node.js
@@ -623,7 +623,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
             <button
               onClick={() => setCodeLanguage('browser')}
               className={`px-3 py-1 rounded transition ${
-                codeLanguage === 'browser' ? 'bg-amber-600 text-white' : 'text-slate-400 hover:text-white'
+                codeLanguage === 'browser' ? 'bg-amber-600 text-white' : 'text-neutral-400 hover:text-white'
               }`}
             >
               Frontend (JS/TS)
@@ -631,7 +631,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
             <button
               onClick={() => setCodeLanguage('curl')}
               className={`px-3 py-1 rounded transition ${
-                codeLanguage === 'curl' ? 'bg-amber-600 text-white' : 'text-slate-400 hover:text-white'
+                codeLanguage === 'curl' ? 'bg-amber-600 text-white' : 'text-neutral-400 hover:text-white'
               }`}
             >
               cURL / REST
@@ -645,17 +645,17 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
               const code = getSnippetCode(codeLanguage, currentWsUrl);
               copyToClipboard(code, `code_${codeLanguage}`);
             }}
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs border border-slate-700 font-mono z-10"
+            className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs border border-neutral-700 font-mono z-10"
           >
             {copiedKey === `code_${codeLanguage}` ? (
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <Check className="w-3.5 h-3.5 text-emerald-500" />
             ) : (
               <Copy className="w-3.5 h-3.5" />
             )}
             <span>{copiedKey === `code_${codeLanguage}` ? 'Copiado' : 'Copiar Código'}</span>
           </button>
 
-          <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-amber-200/90 overflow-x-auto leading-relaxed">
+          <pre className="p-4 bg-neutral-950 rounded-md border border-neutral-800 text-xs font-mono text-amber-300/90 overflow-x-auto leading-relaxed">
             {getSnippetCode(codeLanguage, currentWsUrl)}
           </pre>
         </div>

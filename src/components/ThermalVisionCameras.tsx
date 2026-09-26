@@ -83,10 +83,10 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
   return (
     <div className="space-y-4">
       {/* Top Banner */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-lg p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-neutral-800">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
+            <div className="p-2.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
               <Camera className="w-5 h-5" />
             </div>
             <div>
@@ -94,12 +94,12 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
                 <h3 className="font-bold text-base font-mono text-white">
                   Red de Cámaras Térmicas PTZ & Visión Artificial (IA Edge)
                 </h3>
-                <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                   <span>4 Nodos In-Situ</span>
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-neutral-400">
                 Monitoreo continuo 360° en cerros tutelares de Cali con inferencia en tiempo real (YOLOv8 Edge: Detección de Humo y Fuego en &lt; 30 ms).
               </p>
             </div>
@@ -109,7 +109,7 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
             <button
               onClick={handleTestVisionDetection}
               disabled={isInjectingDetection}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-xs font-semibold shadow-lg transition active:scale-95 disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow-sm transition active:scale-95 disabled:opacity-50"
             >
               <Flame className="w-3.5 h-3.5" />
               <span>Simular Detección IA en Cámara</span>
@@ -123,15 +123,15 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
             <button
               key={cam.id}
               onClick={() => setSelectedCameraId(cam.id)}
-              className={`px-3 py-1.5 rounded-xl transition flex items-center gap-2 border ${
+              className={`px-3 py-1.5 rounded-md transition flex items-center gap-2 border ${
                 selectedCameraId === cam.id
                   ? 'bg-amber-600 text-white border-amber-500 font-bold shadow'
-                  : 'bg-slate-950 text-slate-400 hover:text-white border-slate-800'
+                  : 'bg-neutral-950 text-neutral-400 hover:text-white border-neutral-800'
               }`}
             >
               <span
                 className={`w-2 h-2 rounded-full ${
-                  cam.status === 'ALARM' ? 'bg-red-400 animate-ping' : 'bg-emerald-400'
+                  cam.status === 'ALARM' ? 'bg-red-400' : 'bg-emerald-400'
                 }`}
               ></span>
               <span>{cam.name.split('—')[1]?.trim() || cam.name}</span>
@@ -142,8 +142,8 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-3 bg-emerald-950/90 border border-emerald-700 rounded-xl text-emerald-200 text-xs flex items-center gap-2 shadow-xl animate-fade-in">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-3 bg-emerald-950/90 border border-emerald-700 rounded-md text-emerald-400 text-xs flex items-center gap-2 shadow-sm animate-fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -151,39 +151,39 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
       {/* Active Camera Live Feed Window */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Main Video Simulation Canvas (8 cols) */}
-        <div className="lg:col-span-8 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl flex flex-col">
+        <div className="lg:col-span-8 bg-neutral-950 rounded-lg border border-neutral-800 overflow-hidden shadow-sm flex flex-col">
           {/* Top Video Header */}
-          <div className="bg-slate-900/90 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
+          <div className="bg-neutral-900/90 px-4 py-2 border-b border-neutral-800 flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-2">
               <span className="text-red-400 font-bold flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
                 <span>REC LIVE</span>
               </span>
-              <span className="text-slate-400">|</span>
+              <span className="text-neutral-400">|</span>
               <span className="text-white font-semibold">{activeCamera.name}</span>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => toggleMode(activeCamera.id)}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-semibold transition"
+                className="px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 text-[11px] font-semibold transition"
               >
                 Modo: <strong className="text-amber-400">{activeCamera.currentMode}</strong>
               </button>
-              <span className="text-[11px] text-slate-400 bg-slate-900 px-2 py-1 rounded border border-slate-800">
+              <span className="text-[11px] text-neutral-400 bg-neutral-900 px-2 py-1 rounded border border-neutral-800">
                 {activeCamera.fps} FPS • {activeCamera.latencyMs} ms
               </span>
             </div>
           </div>
 
           {/* Visual Simulation Canvas */}
-          <div className="relative w-full h-[360px] bg-slate-900 flex items-center justify-center overflow-hidden select-none">
+          <div className="relative w-full h-[360px] bg-neutral-900 flex items-center justify-center overflow-hidden select-none">
             {/* Background Simulated Landscape */}
             <div
               className={`absolute inset-0 transition duration-700 ${
                 activeCamera.currentMode === 'THERMAL'
-                  ? 'bg-gradient-to-tr from-slate-950 via-purple-950 to-amber-900 opacity-95'
-                  : 'bg-gradient-to-b from-sky-900 via-slate-800 to-emerald-950'
+                  ? 'bg-gradient-to-tr from-neutral-950 via-neutral-950 to-amber-900 opacity-95'
+                  : 'bg-gradient-to-b from-neutral-900 via-neutral-800 to-emerald-950'
               }`}
             >
               {/* Mountain silhouettes */}
@@ -194,7 +194,7 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
 
               {/* Thermal color heat glow when in THERMAL mode */}
               {activeCamera.currentMode === 'THERMAL' && (
-                <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-gradient-radial from-amber-400 via-red-600 to-transparent opacity-80 blur-xl animate-pulse"></div>
+                <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-gradient-radial from-amber-400 via-red-600 to-transparent opacity-80 blur-xl"></div>
               )}
             </div>
 
@@ -212,9 +212,9 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
               >
                 {/* AI Label Tag */}
                 <div className="absolute -top-6 left-0 bg-red-600 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded shadow flex items-center gap-1.5 whitespace-nowrap">
-                  <Flame className="w-3 h-3 text-amber-300" />
+                  <Flame className="w-3 h-3 text-amber-400" />
                   <span>{det.label}</span>
-                  <span className="text-amber-200">({det.confidence}%)</span>
+                  <span className="text-amber-300">({det.confidence}%)</span>
                   {det.tempC && <span className="text-yellow-300">[{det.tempC}°C]</span>}
                 </div>
               </div>
@@ -222,7 +222,7 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
 
             {/* Thermal Palette Scale on Right */}
             {activeCamera.currentMode === 'THERMAL' && (
-              <div className="absolute right-3 top-4 bottom-4 w-5 bg-gradient-to-t from-purple-900 via-red-600 via-amber-400 to-white rounded-md border border-slate-700/80 flex flex-col justify-between py-1 text-[8px] font-mono text-white text-center font-bold shadow-lg">
+              <div className="absolute right-3 top-4 bottom-4 w-5 bg-gradient-to-t from-neutral-900 via-red-600 via-amber-400 to-white rounded-md border border-neutral-700/80 flex flex-col justify-between py-1 text-[8px] font-mono text-white text-center font-bold shadow-sm">
                 <span>{activeCamera.maxTempC}°C</span>
                 <span>250°C</span>
                 <span>120°C</span>
@@ -232,17 +232,17 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
 
             {/* Target Crosshair */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
-              <div className="w-16 h-16 border border-dashed border-cyan-400 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+              <div className="w-16 h-16 border border-dashed border-neutral-400 rounded-full flex items-center justify-center">
+                <div className="w-2 h-2 bg-neutral-400 rounded-full"></div>
               </div>
             </div>
 
             {/* On-Screen Telemetry HUD */}
-            <div className="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur p-2 rounded-lg border border-slate-800 text-[11px] font-mono space-y-0.5">
-              <div className="text-cyan-300 font-bold">
+            <div className="absolute bottom-3 left-3 bg-neutral-950 p-2 rounded-lg border border-neutral-800 text-[11px] font-mono space-y-0.5">
+              <div className="text-neutral-300 font-bold">
                 CAM: {activeCamera.name.split('—')[0]} • ELEV: {activeCamera.elevationM}m
               </div>
-              <div className="text-slate-400">
+              <div className="text-neutral-400">
                 LAT/LNG: {activeCamera.lat.toFixed(4)}, {activeCamera.lng.toFixed(4)}
               </div>
               <div className="text-amber-400 font-semibold">
@@ -253,40 +253,40 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
         </div>
 
         {/* Camera Details & AI Stats Panel (4 cols) */}
-        <div className="lg:col-span-4 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col justify-between space-y-3">
+        <div className="lg:col-span-4 bg-neutral-900/90 border border-neutral-800 rounded-lg p-4 shadow-sm flex flex-col justify-between space-y-3">
           <div>
-            <div className="flex items-center gap-2 pb-2.5 border-b border-slate-800">
-              <Cpu className="w-4 h-4 text-emerald-400" />
-              <h4 className="font-bold text-sm text-slate-100 font-mono">
+            <div className="flex items-center gap-2 pb-2.5 border-b border-neutral-800">
+              <Cpu className="w-4 h-4 text-emerald-500" />
+              <h4 className="font-bold text-sm text-neutral-100 font-mono">
                 Diagnóstico de Visión Artificial
               </h4>
             </div>
 
             <div className="mt-3 space-y-2 text-xs font-mono">
-              <div className="flex justify-between p-2 rounded bg-slate-950 border border-slate-800">
-                <span className="text-slate-400">Modelo Inferencia:</span>
-                <span className="text-cyan-300 font-bold">YOLOv8-Wildfire Edge</span>
+              <div className="flex justify-between p-2 rounded bg-neutral-950 border border-neutral-800">
+                <span className="text-neutral-400">Modelo Inferencia:</span>
+                <span className="text-neutral-300 font-bold">YOLOv8-Wildfire Edge</span>
               </div>
 
-              <div className="flex justify-between p-2 rounded bg-slate-950 border border-slate-800">
-                <span className="text-slate-400">Latencia Inferencia:</span>
-                <span className="text-emerald-400 font-bold">{activeCamera.latencyMs} ms</span>
+              <div className="flex justify-between p-2 rounded bg-neutral-950 border border-neutral-800">
+                <span className="text-neutral-400">Latencia Inferencia:</span>
+                <span className="text-emerald-500 font-bold">{activeCamera.latencyMs} ms</span>
               </div>
 
-              <div className="flex justify-between p-2 rounded bg-slate-950 border border-slate-800">
-                <span className="text-slate-400">Tasa de Cuadros:</span>
+              <div className="flex justify-between p-2 rounded bg-neutral-950 border border-neutral-800">
+                <span className="text-neutral-400">Tasa de Cuadros:</span>
                 <span className="text-white font-bold">{activeCamera.fps} FPS</span>
               </div>
 
-              <div className="flex justify-between p-2 rounded bg-slate-950 border border-slate-800">
-                <span className="text-slate-400">Detecciones Activas:</span>
+              <div className="flex justify-between p-2 rounded bg-neutral-950 border border-neutral-800">
+                <span className="text-neutral-400">Detecciones Activas:</span>
                 <span className="text-red-400 font-bold">{activeCamera.detections.length} Focos</span>
               </div>
             </div>
 
             {/* Detection List */}
             <div className="mt-3 space-y-1.5">
-              <div className="text-[11px] font-mono text-slate-400 uppercase font-semibold">
+              <div className="text-[11px] font-mono text-neutral-400 uppercase font-semibold">
                 Foco Detectado en Cuadro:
               </div>
               {activeCamera.detections.map((det) => (
@@ -296,20 +296,20 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
                 >
                   <div className="flex items-center gap-2">
                     <Flame className="w-3.5 h-3.5 text-red-400" />
-                    <span className="text-slate-200">{det.label}</span>
+                    <span className="text-neutral-200">{det.label}</span>
                   </div>
-                  <span className="text-amber-300 font-bold">{det.confidence}%</span>
+                  <span className="text-amber-400 font-bold">{det.confidence}%</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quick trigger action */}
-          <div className="pt-2 border-t border-slate-800">
+          <div className="pt-2 border-t border-neutral-800">
             <button
               onClick={handleTestVisionDetection}
               disabled={isInjectingDetection}
-              className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition"
+              className="w-full flex items-center justify-center gap-2 py-2 rounded-md bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Escalar Detección a Bomberos Cali (WhatsApp)</span>

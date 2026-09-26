@@ -75,10 +75,10 @@ export const WhatsAppBotDispatcher: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Header Banner */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-lg p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-neutral-800">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="p-2.5 rounded-md bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
               <MessageSquare className="w-5 h-5" />
             </div>
             <div>
@@ -86,11 +86,11 @@ export const WhatsAppBotDispatcher: React.FC = () => {
                 <h3 className="font-bold text-base font-mono text-white">
                   Bot Automatizado de WhatsApp (Despacho Táctico Bomberos Cali)
                 </h3>
-                <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold">
+                <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold">
                   API Meta Cloud / Twilio Ready
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-neutral-400">
                 Notificación instantánea a grupos de WhatsApp de Bomberos Cali (Central X-1), brigadas comunitarias de ladera y guardaparques.
               </p>
             </div>
@@ -100,11 +100,11 @@ export const WhatsAppBotDispatcher: React.FC = () => {
         {/* Quick Dispatch Controls */}
         <div className="mt-3 grid grid-cols-1 md:grid-cols-4 gap-2 text-xs font-mono">
           <div>
-            <label className="text-[10px] text-slate-400 uppercase block mb-1">Destinatario / Grupo:</label>
+            <label className="text-[10px] text-neutral-400 uppercase block mb-1">Destinatario / Grupo:</label>
             <select
               value={selectedGroup}
               onChange={(e) => setSelectedGroup(e.target.value)}
-              className="w-full bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs text-white"
+              className="w-full bg-neutral-950 p-2 rounded-lg border border-neutral-800 text-xs text-white"
             >
               <option value="Central X-1 Bomberos Cali">Central X-1 Bomberos Cali</option>
               <option value="Brigada Comunitaria Ladera Siloé / Bataclán">Brigada Ladera Siloé / Bataclán</option>
@@ -114,21 +114,21 @@ export const WhatsAppBotDispatcher: React.FC = () => {
           </div>
 
           <div>
-            <label className="text-[10px] text-slate-400 uppercase block mb-1">Sector de Emergencia:</label>
+            <label className="text-[10px] text-neutral-400 uppercase block mb-1">Sector de Emergencia:</label>
             <input
               type="text"
               value={customSector}
               onChange={(e) => setCustomSector(e.target.value)}
-              className="w-full bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs text-white"
+              className="w-full bg-neutral-950 p-2 rounded-lg border border-neutral-800 text-xs text-white"
             />
           </div>
 
           <div>
-            <label className="text-[10px] text-slate-400 uppercase block mb-1">Nivel de Prioridad:</label>
+            <label className="text-[10px] text-neutral-400 uppercase block mb-1">Nivel de Prioridad:</label>
             <select
               value={customRisk}
               onChange={(e: any) => setCustomRisk(e.target.value)}
-              className="w-full bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs text-amber-300"
+              className="w-full bg-neutral-950 p-2 rounded-lg border border-neutral-800 text-xs text-amber-400"
             >
               <option value="CRITICAL">CRITICAL (Código Rojo)</option>
               <option value="HIGH">HIGH (Código Naranja)</option>
@@ -157,36 +157,36 @@ export const WhatsAppBotDispatcher: React.FC = () => {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-3 bg-emerald-950/90 border border-emerald-700 rounded-xl text-emerald-200 text-xs flex items-center gap-2 shadow-xl animate-fade-in">
-          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-3 bg-emerald-950/90 border border-emerald-700 rounded-md text-emerald-400 text-xs flex items-center gap-2 shadow-sm animate-fade-in">
+          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Realistic WhatsApp Chat Emulator */}
-      <div className="max-w-2xl mx-auto bg-[#0b141a] rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+      <div className="max-w-2xl mx-auto bg-[#0b141a] rounded-lg border border-neutral-800 overflow-hidden shadow-sm">
         {/* WhatsApp Top Bar */}
-        <div className="bg-[#202c33] px-4 py-3 border-b border-slate-700 flex items-center justify-between">
+        <div className="bg-[#202c33] px-4 py-3 border-b border-neutral-700 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center font-bold text-white shadow">
+            <div className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center font-bold text-white shadow">
               <Flame className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-semibold text-sm text-slate-100">
+                <span className="font-semibold text-sm text-neutral-100">
                   NatureIntelligence • Despacho Bomberos Cali
                 </span>
                 <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 text-black flex items-center justify-center text-[9px] font-bold">
                   ✓
                 </span>
               </div>
-              <p className="text-[11px] text-emerald-400">
+              <p className="text-[11px] text-emerald-500">
                 Bot Automatizado en Línea • Notificaciones Oficiales
               </p>
             </div>
           </div>
 
-          <div className="text-[11px] font-mono bg-[#111b21] px-2.5 py-1 rounded text-slate-400 border border-slate-700">
+          <div className="text-[11px] font-mono bg-[#111b21] px-2.5 py-1 rounded text-neutral-400 border border-neutral-700">
             {messages.length} Despachos
           </div>
         </div>
@@ -201,14 +201,14 @@ export const WhatsAppBotDispatcher: React.FC = () => {
         >
           {messages.map((msg) => (
             <div key={msg.id} className="flex flex-col items-start max-w-[90%] md:max-w-[80%]">
-              <div className="bg-[#005c4b] text-slate-100 rounded-xl p-3.5 shadow-lg border border-emerald-600/30 space-y-2">
+              <div className="bg-[#005c4b] text-neutral-100 rounded-md p-3.5 shadow-sm border border-emerald-600/30 space-y-2">
                 {/* Header inside bubble */}
                 <div className="flex items-center justify-between gap-2 border-b border-emerald-600/40 pb-1.5 text-xs font-mono">
-                  <span className="text-amber-300 font-bold flex items-center gap-1">
+                  <span className="text-amber-400 font-bold flex items-center gap-1">
                     <Flame className="w-3.5 h-3.5" />
                     <span>ALERTA {msg.riskLevel} BOMBEROS CALI</span>
                   </span>
-                  <span className="text-[10px] text-emerald-200">{msg.alertId}</span>
+                  <span className="text-[10px] text-emerald-400">{msg.alertId}</span>
                 </div>
 
                 {/* Message Body */}
@@ -249,9 +249,9 @@ export const WhatsAppBotDispatcher: React.FC = () => {
                 </div>
 
                 {/* Bubble Timestamp and Status */}
-                <div className="flex items-center justify-end gap-1 text-[10px] text-emerald-200/80 pt-1">
+                <div className="flex items-center justify-end gap-1 text-[10px] text-emerald-400/80 pt-1">
                   <span>{msg.timestamp}</span>
-                  <CheckCheck className="w-3.5 h-3.5 text-cyan-300" />
+                  <CheckCheck className="w-3.5 h-3.5 text-neutral-300" />
                 </div>
               </div>
             </div>

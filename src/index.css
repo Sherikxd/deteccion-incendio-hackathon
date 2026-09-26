@@ -1,9 +1,42 @@
 @import "tailwindcss";
 
-/* ===== Ajustes para móvil ===== */
+/* ===== Sistema de diseño sobrio =====
+   - Public Sans para la UI (humanista, legible a tamaños chicos); monoespaciada
+     sólo para datos y código.
+   - Sin degradados ni animaciones decorativas: el color sólo comunica estado.
+   - Interlineado holgado en todo el texto: comodidad de lectura sin alterar
+     los tamaños de fuente.
+*/
+@theme {
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  --text-xs--line-height: 1.4;
+  --text-sm--line-height: 1.5;
+  --text-base--line-height: 1.6;
+  --text-lg--line-height: 1.55;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: #0d0e10;
+  color: #d7d8da;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Filas/tablas y cifras: mantener la cifra estable cuando cambia (contadores) */
+.tabular-nums,
+.font-mono {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Utilidad: tiras de pestañas con scroll horizontal sin barra visible */
@@ -15,9 +48,29 @@ html {
   display: none;
 }
 
+/* Barras de scroll discretas */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #35373b transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #35373b;
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #4a4d52;
+  background-clip: content-box;
+}
+
 /* Utilidad: transición de aparición para toasts y cajas de estado */
 .animate-fade-in {
-  animation: natureintelligence-fade-in 0.25s ease-out both;
+  animation: natureintelligence-fade-in 0.2s ease-out both;
 }
 
 @keyframes natureintelligence-fade-in {

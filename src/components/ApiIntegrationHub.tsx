@@ -83,20 +83,20 @@ export const ApiIntegrationHub: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 text-slate-100">
+    <div className="space-y-6 text-neutral-100">
       {/* Hero Developer Integration Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl">
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-neutral-800">
           <div>
             <div className="flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <span className="p-2 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
                 <Zap className="w-5 h-5" />
               </span>
               <div>
                 <h2 className="text-lg font-bold font-mono tracking-wide text-white">
                   INTEGRACIÓN DE LA API EN OTROS PROYECTOS
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-neutral-400 mt-0.5">
                   Conecta cualquier aplicación móvil, web, bot o script de Python en menos de 2 minutos.
                 </p>
               </div>
@@ -104,8 +104,8 @@ export const ApiIntegrationHub: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-lg flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span className="text-[11px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-3 py-1 rounded-lg flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               <span>CORS Habilitado (Sin Bloqueos)</span>
             </span>
           </div>
@@ -113,38 +113,38 @@ export const ApiIntegrationHub: React.FC = () => {
 
         {/* 3 Steps Integration Summary */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
-          <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-            <div className="font-mono text-cyan-400 font-bold text-[11px] flex items-center gap-1 mb-1">
+          <div className="bg-neutral-950/80 p-3.5 rounded-md border border-neutral-800">
+            <div className="font-mono text-neutral-400 font-bold text-[11px] flex items-center gap-1 mb-1">
               <span>1. TIEMPO REAL (SSE / WS)</span>
             </div>
-            <code className="text-white text-xs block font-mono bg-slate-900 p-1.5 rounded border border-slate-800 mb-1.5">
+            <code className="text-white text-xs block font-mono bg-neutral-900 p-1.5 rounded border border-neutral-800 mb-1.5">
               GET {baseUrl}/stream
             </code>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-neutral-400 text-[11px] leading-relaxed">
               Recibe cada alerta de incendio y cambio en sensores de Cali automáticamente sin hacer polling.
             </p>
           </div>
 
-          <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+          <div className="bg-neutral-950/80 p-3.5 rounded-md border border-neutral-800">
             <div className="font-mono text-amber-400 font-bold text-[11px] flex items-center gap-1 mb-1">
               <span>2. CONSULTA REST PUNTUAL</span>
             </div>
-            <code className="text-white text-xs block font-mono bg-slate-900 p-1.5 rounded border border-slate-800 mb-1.5">
+            <code className="text-white text-xs block font-mono bg-neutral-900 p-1.5 rounded border border-neutral-800 mb-1.5">
               GET {baseUrl}/api/alerts
             </code>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-neutral-400 text-[11px] leading-relaxed">
               Retorna el listado estructurado de alertas activas en formato JSON listo para renderizar.
             </p>
           </div>
 
-          <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-            <div className="font-mono text-emerald-400 font-bold text-[11px] flex items-center gap-1 mb-1">
+          <div className="bg-neutral-950/80 p-3.5 rounded-md border border-neutral-800">
+            <div className="font-mono text-emerald-500 font-bold text-[11px] flex items-center gap-1 mb-1">
               <span>3. ENVIAR O VERIFICAR</span>
             </div>
-            <code className="text-white text-xs block font-mono bg-slate-900 p-1.5 rounded border border-slate-800 mb-1.5">
+            <code className="text-white text-xs block font-mono bg-neutral-900 p-1.5 rounded border border-neutral-800 mb-1.5">
               POST {baseUrl}/api/alerts
             </code>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-neutral-400 text-[11px] leading-relaxed">
               Emite alertas desde drones, estaciones propias o solicita diagnóstico táctico instantáneo.
             </p>
           </div>
@@ -152,20 +152,20 @@ export const ApiIntegrationHub: React.FC = () => {
       </div>
 
       {/* Code Snippets Section */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl">
-        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800 gap-2">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-lg p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-neutral-800 gap-2">
           <div className="flex items-center gap-2">
-            <Code2 className="w-4 h-4 text-cyan-400" />
-            <h3 className="font-bold text-sm text-slate-100 font-mono">
+            <Code2 className="w-4 h-4 text-neutral-400" />
+            <h3 className="font-bold text-sm text-neutral-100 font-mono">
               Código Listo para Copiar y Pegar en tu Proyecto
             </h3>
           </div>
 
-          <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs font-mono">
             <button
               onClick={() => setSelectedLang('python')}
               className={`px-3 py-1 rounded transition ${
-                selectedLang === 'python' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                selectedLang === 'python' ? 'bg-amber-600 text-white font-bold' : 'text-neutral-400 hover:text-white'
               }`}
             >
               Python
@@ -173,7 +173,7 @@ export const ApiIntegrationHub: React.FC = () => {
             <button
               onClick={() => setSelectedLang('javascript')}
               className={`px-3 py-1 rounded transition ${
-                selectedLang === 'javascript' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                selectedLang === 'javascript' ? 'bg-amber-600 text-white font-bold' : 'text-neutral-400 hover:text-white'
               }`}
             >
               JavaScript / React / Node
@@ -181,7 +181,7 @@ export const ApiIntegrationHub: React.FC = () => {
             <button
               onClick={() => setSelectedLang('curl')}
               className={`px-3 py-1 rounded transition ${
-                selectedLang === 'curl' ? 'bg-amber-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                selectedLang === 'curl' ? 'bg-amber-600 text-white font-bold' : 'text-neutral-400 hover:text-white'
               }`}
             >
               cURL (Terminal)
@@ -195,32 +195,32 @@ export const ApiIntegrationHub: React.FC = () => {
               const code = getSnippet(selectedLang, baseUrl);
               copyToClipboard(code, `code_${selectedLang}`);
             }}
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono border border-slate-700 z-10 transition"
+            className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono border border-neutral-700 z-10 transition"
           >
             {copiedKey === `code_${selectedLang}` ? (
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <Check className="w-3.5 h-3.5 text-emerald-500" />
             ) : (
               <Copy className="w-3.5 h-3.5" />
             )}
             <span>{copiedKey === `code_${selectedLang}` ? 'Copiado' : 'Copiar Código'}</span>
           </button>
 
-          <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-cyan-200/90 overflow-x-auto leading-relaxed">
+          <pre className="p-4 bg-neutral-950 rounded-md border border-neutral-800 text-xs font-mono text-neutral-200/90 overflow-x-auto leading-relaxed">
             {getSnippet(selectedLang, baseUrl)}
           </pre>
         </div>
       </div>
 
       {/* Interactive API Tester Console */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl">
-        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800 gap-2">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-lg p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-neutral-800 gap-2">
           <div className="flex items-center gap-2">
-            <Terminal className="w-4 h-4 text-emerald-400" />
+            <Terminal className="w-4 h-4 text-emerald-500" />
             <div>
-              <h3 className="font-bold text-sm text-slate-100 font-mono">
+              <h3 className="font-bold text-sm text-neutral-100 font-mono">
                 Consola Interactiva: Probar la API en Vivo
               </h3>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-neutral-400">
                 Haz clic en cualquier endpoint para probar la respuesta real del servidor al instante.
               </p>
             </div>
@@ -236,7 +236,7 @@ export const ApiIntegrationHub: React.FC = () => {
               className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium transition ${
                 testEndpoint === 'alerts'
                   ? 'bg-amber-600 text-white'
-                  : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+                  : 'bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700'
               }`}
             >
               GET /api/alerts
@@ -250,7 +250,7 @@ export const ApiIntegrationHub: React.FC = () => {
               className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium transition ${
                 testEndpoint === 'sensors'
                   ? 'bg-amber-600 text-white'
-                  : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+                  : 'bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700'
               }`}
             >
               GET /api/sensors
@@ -264,7 +264,7 @@ export const ApiIntegrationHub: React.FC = () => {
               className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium transition ${
                 testEndpoint === 'verify'
                   ? 'bg-amber-600 text-white'
-                  : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+                  : 'bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700'
               }`}
             >
               POST /api/verify
@@ -273,12 +273,12 @@ export const ApiIntegrationHub: React.FC = () => {
         </div>
 
         {/* Live response window */}
-        <div className="mt-3 bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800/80 mb-2">
+        <div className="mt-3 bg-neutral-950 p-4 rounded-md border border-neutral-800 font-mono text-xs">
+          <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80 mb-2">
             <div className="flex items-center gap-2">
-              <span className="text-emerald-400 font-bold">200 OK</span>
+              <span className="text-emerald-500 font-bold">200 OK</span>
               {testLatency !== null && (
-                <span className="text-[10px] text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
+                <span className="text-[10px] text-neutral-400 bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-800">
                   {testLatency} ms
                 </span>
               )}
@@ -287,25 +287,25 @@ export const ApiIntegrationHub: React.FC = () => {
             {testResult && (
               <button
                 onClick={() => copyToClipboard(JSON.stringify(testResult, null, 2), 'testres')}
-                className="text-[11px] text-slate-400 hover:text-white flex items-center gap-1"
+                className="text-[11px] text-neutral-400 hover:text-white flex items-center gap-1"
               >
-                {copiedKey === 'testres' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                {copiedKey === 'testres' ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                 <span>Copiar Respuesta</span>
               </button>
             )}
           </div>
 
           {isTesting ? (
-            <div className="py-8 text-center text-slate-400 flex items-center justify-center gap-2">
+            <div className="py-8 text-center text-neutral-400 flex items-center justify-center gap-2">
               <span className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></span>
               <span>Consultando endpoint en vivo...</span>
             </div>
           ) : testResult ? (
-            <pre className="max-h-60 overflow-y-auto text-amber-200/90 text-[11px] leading-snug">
+            <pre className="max-h-60 overflow-y-auto text-amber-300/90 text-[11px] leading-snug">
               {JSON.stringify(testResult, null, 2)}
             </pre>
           ) : (
-            <div className="py-8 text-center text-slate-500">
+            <div className="py-8 text-center text-neutral-400">
               Haz clic en cualquiera de los botones superiores para ejecutar una petición de prueba.
             </div>
           )}
@@ -313,73 +313,73 @@ export const ApiIntegrationHub: React.FC = () => {
       </div>
 
       {/* Markdown Documentation Folder (/docs) */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-lg p-5 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800 pb-3">
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-amber-400" />
             <div>
-              <h3 className="font-bold text-sm text-slate-100 font-mono">
+              <h3 className="font-bold text-sm text-neutral-100 font-mono">
                 Documentación Completa en Markdown (Carpeta /docs)
               </h3>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-neutral-400">
                 Archivos estructurados listos para consultar en GitHub, VSCode o wikis de ingeniería.
               </p>
             </div>
           </div>
-          <span className="text-[10px] font-mono bg-slate-950 px-2 py-1 rounded text-slate-400 border border-slate-800">
+          <span className="text-[10px] font-mono bg-neutral-950 px-2 py-1 rounded text-neutral-400 border border-neutral-800">
             /docs/*.md
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
-          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 hover:border-slate-700 transition space-y-1">
+          <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 hover:border-neutral-700 transition space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-cyan-400 font-bold flex items-center gap-1.5">
+              <span className="text-neutral-400 font-bold flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5" />
                 <span>docs/01-COMO-FUNCIONA.md</span>
               </span>
-              <span className="text-[10px] text-slate-500">Fundamentos</span>
+              <span className="text-[10px] text-neutral-400">Fundamentos</span>
             </div>
-            <p className="text-slate-300 font-sans text-xs leading-relaxed">
+            <p className="text-neutral-300 font-sans text-xs leading-relaxed">
               Explicación del flujo en 4 etapas: satélites NASA FIRMS, red de sensores terrestres en Cali, correlación táctica con IA y despacho a Bomberos Cali (X-1).
             </p>
           </div>
 
-          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 hover:border-slate-700 transition space-y-1">
+          <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 hover:border-neutral-700 transition space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-purple-400 font-bold flex items-center gap-1.5">
+              <span className="text-neutral-400 font-bold flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5" />
                 <span>docs/02-ARQUITECTURA.md</span>
               </span>
-              <span className="text-[10px] text-slate-500">Arquitectura</span>
+              <span className="text-[10px] text-neutral-400">Arquitectura</span>
             </div>
-            <p className="text-slate-300 font-sans text-xs leading-relaxed">
+            <p className="text-neutral-300 font-sans text-xs leading-relaxed">
               Diagrama de bloques, capas del backend (Express + SSE + WebSockets), pipelines espectrales de Copernicus Sentinel-2 y gestión de secretos en backend.
             </p>
           </div>
 
-          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 hover:border-slate-700 transition space-y-1">
+          <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 hover:border-neutral-700 transition space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+              <span className="text-emerald-500 font-bold flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5" />
                 <span>docs/03-INTEGRACION-WEB.md</span>
               </span>
-              <span className="text-[10px] text-slate-500">Guía Web</span>
+              <span className="text-[10px] text-neutral-400">Guía Web</span>
             </div>
-            <p className="text-slate-300 font-sans text-xs leading-relaxed">
+            <p className="text-neutral-300 font-sans text-xs leading-relaxed">
               Guías con código completo para React, Next.js, Vue, Angular, Vanilla JS, Node.js, Python (FastAPI/Flask) y aplicaciones móviles (React Native/Flutter).
             </p>
           </div>
 
-          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 hover:border-slate-700 transition space-y-1">
+          <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 hover:border-neutral-700 transition space-y-1">
             <div className="flex items-center justify-between">
               <span className="text-amber-400 font-bold flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5" />
                 <span>docs/04-API-REFERENCE.md</span>
               </span>
-              <span className="text-[10px] text-slate-500">Endpoints</span>
+              <span className="text-[10px] text-neutral-400">Endpoints</span>
             </div>
-            <p className="text-slate-300 font-sans text-xs leading-relaxed">
+            <p className="text-neutral-300 font-sans text-xs leading-relaxed">
               Catálogo completo de endpoints REST (`/api/alerts`, `/api/sensors`, `/api/verify`), canal Server-Sent Events (`/stream`), WebSocket (`/ws`) y esquemas JSON.
             </p>
           </div>

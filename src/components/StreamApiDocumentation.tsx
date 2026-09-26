@@ -30,20 +30,20 @@ export const StreamApiDocumentation: React.FC = () => {
   const wsUrl = `${currentProto === 'https:' ? 'wss:' : 'ws:'}//${currentHost}/stream`;
 
   return (
-    <div className="space-y-6 text-slate-100">
+    <div className="space-y-6 text-neutral-100">
       {/* Header Banner */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-2xl">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <span className="p-2 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
                 <BookOpen className="w-5 h-5" />
               </span>
               <div>
                 <h2 className="text-lg font-bold font-mono tracking-wide text-white">
                   DOCUMENTACIÓN DE INTEGRACIÓN: CANAL /stream
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-neutral-400">
                   Especificación de conexión en tiempo real vía Server-Sent Events (SSE) y WebSocket para Cali & Valle del Cauca
                 </p>
               </div>
@@ -51,7 +51,7 @@ export const StreamApiDocumentation: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
+            <span className="text-[11px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
               HTTP/1.1 & HTTP/2 SSE + WebSockets
             </span>
           </div>
@@ -59,41 +59,41 @@ export const StreamApiDocumentation: React.FC = () => {
 
         {/* Quick Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
-          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-1">
-            <div className="text-[10px] font-mono uppercase text-cyan-400 font-bold flex items-center gap-1.5">
+          <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 space-y-1">
+            <div className="text-[10px] font-mono uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
               <Wifi className="w-3.5 h-3.5" />
               <span>1. Endpoint Principal /stream</span>
             </div>
             <div className="font-mono text-white text-xs select-all">
               GET {streamUrl}
             </div>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-neutral-400 text-[11px] leading-relaxed">
               Conexión continua HTTP Server-Sent Events. Compatible de forma nativa con navegadores (EventSource), curl y cualquier lenguaje sin dependencias pesadas.
             </p>
           </div>
 
-          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-1">
-            <div className="text-[10px] font-mono uppercase text-amber-400 font-bold flex items-center gap-1.5">
+          <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 space-y-1">
+            <div className="text-[10px] font-mono uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
               <Flame className="w-3.5 h-3.5" />
               <span>2. Emisión de Alertas Externas</span>
             </div>
             <div className="font-mono text-white text-xs select-all">
               POST {streamUrl}
             </div>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-neutral-400 text-[11px] leading-relaxed">
               Permite a drones térmicos, puestos de comando móvil o sensores periféricos inyectar una alerta que se propaga instantáneamente a todos los clientes.
             </p>
           </div>
 
-          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-1">
-            <div className="text-[10px] font-mono uppercase text-purple-400 font-bold flex items-center gap-1.5">
+          <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 space-y-1">
+            <div className="text-[10px] font-mono uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
               <Server className="w-3.5 h-3.5" />
               <span>3. Socket Bidireccional</span>
             </div>
             <div className="font-mono text-white text-xs select-all">
               WS {wsUrl}
             </div>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-neutral-400 text-[11px] leading-relaxed">
               Para aplicaciones que requieren bidireccionalidad interactiva: suscripción a subcanales, streaming de IA con OpenRouter y ping/pong.
             </p>
           </div>
@@ -101,17 +101,17 @@ export const StreamApiDocumentation: React.FC = () => {
       </div>
 
       {/* Code Examples Playground */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-2xl">
-        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800 gap-2">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between pb-3 border-b border-neutral-800 gap-2">
           <div className="flex items-center gap-2">
-            <Code2 className="w-4 h-4 text-cyan-400" />
-            <h3 className="font-bold text-sm text-slate-100 font-mono">
+            <Code2 className="w-4 h-4 text-neutral-400" />
+            <h3 className="font-bold text-sm text-neutral-100 font-mono">
               Cómo Conectarse al /stream desde Cualquier Aplicación
             </h3>
           </div>
 
           {/* Language Switcher */}
-          <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs font-mono">
             {(['curl', 'javascript', 'python', 'nodejs', 'golang'] as const).map((lang) => (
               <button
                 key={lang}
@@ -119,7 +119,7 @@ export const StreamApiDocumentation: React.FC = () => {
                 className={`px-3 py-1 rounded transition capitalize ${
                   selectedLanguage === lang
                     ? 'bg-amber-600 text-white shadow'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-neutral-400 hover:text-white'
                 }`}
               >
                 {lang}
@@ -135,25 +135,25 @@ export const StreamApiDocumentation: React.FC = () => {
               const code = getCodeSnippet(selectedLanguage, streamUrl, wsUrl);
               copyToClipboard(code, `code_${selectedLanguage}`);
             }}
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono border border-slate-700 z-10 transition"
+            className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono border border-neutral-700 z-10 transition"
           >
             {copiedKey === `code_${selectedLanguage}` ? (
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <Check className="w-3.5 h-3.5 text-emerald-500" />
             ) : (
               <Copy className="w-3.5 h-3.5" />
             )}
             <span>{copiedKey === `code_${selectedLanguage}` ? 'Copiado' : 'Copiar Código'}</span>
           </button>
 
-          <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-cyan-200/90 overflow-x-auto leading-relaxed">
+          <pre className="p-4 bg-neutral-950 rounded-md border border-neutral-800 text-xs font-mono text-neutral-200/90 overflow-x-auto leading-relaxed">
             {getCodeSnippet(selectedLanguage, streamUrl, wsUrl)}
           </pre>
         </div>
       </div>
 
       {/* API Endpoints Table */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-2xl space-y-4">
-        <h3 className="font-bold text-sm text-amber-400 font-mono uppercase tracking-wider flex items-center gap-2">
+      <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm space-y-4">
+        <h3 className="font-semibold text-sm text-neutral-400 font-mono uppercase tracking-wide flex items-center gap-2">
           <Terminal className="w-4 h-4" />
           <span>Matriz de Endpoints y Parámetros del /stream</span>
         </h3>
@@ -161,7 +161,7 @@ export const StreamApiDocumentation: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono border-collapse">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 bg-slate-950/60">
+              <tr className="border-b border-neutral-800 text-neutral-400 bg-neutral-950/60">
                 <th className="py-2.5 px-3">Método</th>
                 <th className="py-2.5 px-3">Ruta</th>
                 <th className="py-2.5 px-3">Parámetros / Query</th>
@@ -169,61 +169,61 @@ export const StreamApiDocumentation: React.FC = () => {
                 <th className="py-2.5 px-3">Descripción</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-300">
-              <tr className="hover:bg-slate-800/40">
-                <td className="py-2.5 px-3 text-emerald-400 font-bold">GET</td>
+            <tbody className="divide-y divide-neutral-800 text-neutral-300">
+              <tr className="hover:bg-neutral-800/40">
+                <td className="py-2.5 px-3 text-emerald-500 font-bold">GET</td>
                 <td className="py-2.5 px-3 text-white font-bold">/stream</td>
-                <td className="py-2.5 px-3 text-amber-300">?channel=alerts|telemetry|incidents|analysis|all</td>
-                <td className="py-2.5 px-3 text-cyan-300">HTTP SSE</td>
+                <td className="py-2.5 px-3 text-amber-400">?channel=alerts|telemetry|incidents|analysis|all</td>
+                <td className="py-2.5 px-3 text-neutral-300">HTTP SSE</td>
                 <td className="py-2.5 px-3 font-sans">
                   Abre un canal de eventos unidireccional permanente. Emite{' '}
-                  <code className="text-amber-300">event: alert</code>,{' '}
-                  <code className="text-amber-300">event: sensor_update</code> y{' '}
-                  <code className="text-amber-300">event: analysis</code> (más <code>connected</code> e{' '}
+                  <code className="text-amber-400">event: alert</code>,{' '}
+                  <code className="text-amber-400">event: sensor_update</code> y{' '}
+                  <code className="text-amber-400">event: analysis</code> (más <code>connected</code> e{' '}
                   <code>initial_alerts</code> al conectar).
                 </td>
               </tr>
-              <tr className="hover:bg-slate-800/40">
+              <tr className="hover:bg-neutral-800/40">
                 <td className="py-2.5 px-3 text-amber-400 font-bold">POST</td>
                 <td className="py-2.5 px-3 text-white font-bold">/stream</td>
-                <td className="py-2.5 px-3 text-slate-400">JSON Body (AlertPayload)</td>
-                <td className="py-2.5 px-3 text-cyan-300">HTTP REST</td>
+                <td className="py-2.5 px-3 text-neutral-400">JSON Body (AlertPayload)</td>
+                <td className="py-2.5 px-3 text-neutral-300">HTTP REST</td>
                 <td className="py-2.5 px-3 font-sans">
                   Inyecta una alerta de emergencia desde un sistema externo, difundiéndola a todos los clientes conectados al /stream.
                 </td>
               </tr>
-              <tr className="hover:bg-slate-800/40">
-                <td className="py-2.5 px-3 text-emerald-400 font-bold">GET</td>
+              <tr className="hover:bg-neutral-800/40">
+                <td className="py-2.5 px-3 text-emerald-500 font-bold">GET</td>
                 <td className="py-2.5 px-3 text-white font-bold">/stream/alerts</td>
-                <td className="py-2.5 px-3 text-slate-400">Ninguno</td>
-                <td className="py-2.5 px-3 text-cyan-300">JSON Snapshot</td>
+                <td className="py-2.5 px-3 text-neutral-400">Ninguno</td>
+                <td className="py-2.5 px-3 text-neutral-300">JSON Snapshot</td>
                 <td className="py-2.5 px-3 font-sans">
                   Retorna el historial reciente de las alertas activas en Cali y Valle del Cauca en formato JSON plano.
                 </td>
               </tr>
-              <tr className="hover:bg-slate-800/40">
-                <td className="py-2.5 px-3 text-emerald-400 font-bold">GET</td>
+              <tr className="hover:bg-neutral-800/40">
+                <td className="py-2.5 px-3 text-emerald-500 font-bold">GET</td>
                 <td className="py-2.5 px-3 text-white font-bold">/stream/info</td>
-                <td className="py-2.5 px-3 text-slate-400">Ninguno</td>
-                <td className="py-2.5 px-3 text-cyan-300">JSON Metadata</td>
+                <td className="py-2.5 px-3 text-neutral-400">Ninguno</td>
+                <td className="py-2.5 px-3 text-neutral-300">JSON Metadata</td>
                 <td className="py-2.5 px-3 font-sans">
                   Estadísticas en vivo, número de escuchas activos, tiempo de actividad y canales soportados.
                 </td>
               </tr>
-              <tr className="hover:bg-slate-800/40">
-                <td className="py-2.5 px-3 text-purple-400 font-bold">WS</td>
+              <tr className="hover:bg-neutral-800/40">
+                <td className="py-2.5 px-3 text-neutral-400 font-bold">WS</td>
                 <td className="py-2.5 px-3 text-white font-bold">/stream (o /ws)</td>
-                <td className="py-2.5 px-3 text-slate-400">Subprotocolos estándar</td>
-                <td className="py-2.5 px-3 text-purple-300">WebSocket</td>
+                <td className="py-2.5 px-3 text-neutral-400">Subprotocolos estándar</td>
+                <td className="py-2.5 px-3 text-neutral-300">WebSocket</td>
                 <td className="py-2.5 px-3 font-sans">
                   Canal dúplex completo para suscripción dinámica, inferencia token a token con OpenRouter y telemetría.
                 </td>
               </tr>
-              <tr className="hover:bg-slate-800/40">
-                <td className="py-2.5 px-3 text-emerald-400 font-bold">GET</td>
+              <tr className="hover:bg-neutral-800/40">
+                <td className="py-2.5 px-3 text-emerald-500 font-bold">GET</td>
                 <td className="py-2.5 px-3 text-white font-bold">/api/health</td>
-                <td className="py-2.5 px-3 text-slate-400">Ninguno</td>
-                <td className="py-2.5 px-3 text-cyan-300">JSON Health</td>
+                <td className="py-2.5 px-3 text-neutral-400">Ninguno</td>
+                <td className="py-2.5 px-3 text-neutral-300">JSON Health</td>
                 <td className="py-2.5 px-3 font-sans">
                   Verificación de disponibilidad de infraestructura (liveness probe).
                 </td>
@@ -232,8 +232,8 @@ export const StreamApiDocumentation: React.FC = () => {
           </table>
         </div>
 
-        <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/50 text-[11px] text-amber-200 font-sans leading-relaxed">
-          <strong className="font-mono text-amber-300">Límites operativos:</strong> las solicitudes <code>POST</code>{' '}
+        <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/50 text-[11px] text-amber-300 font-sans leading-relaxed">
+          <strong className="font-mono text-amber-400">Límites operativos:</strong> las solicitudes <code>POST</code>{' '}
           comparten un límite de <strong>60 por minuto e IP</strong> (respuesta <code className="font-mono">429</code>) y
           el canal SSE admite hasta <strong>250 escuchas simultáneas</strong> (respuesta{' '}
           <code className="font-mono">503</code>). Los cuerpos JSON se limitan a 256 kB.
@@ -243,17 +243,17 @@ export const StreamApiDocumentation: React.FC = () => {
       {/* Data Model / JSON Payload Specification */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Alert JSON Schema */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-2xl space-y-2">
-          <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+        <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm space-y-2">
+          <div className="flex items-center gap-2 border-b border-neutral-800 pb-2">
             <Flame className="w-4 h-4 text-red-400" />
-            <h4 className="font-bold text-sm text-slate-100 font-mono">
+            <h4 className="font-bold text-sm text-neutral-100 font-mono">
               Esquema de Alerta de Incendio (Canal #alerts)
             </h4>
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed font-sans">
+          <p className="text-xs text-neutral-400 leading-relaxed font-sans">
             Estructura JSON emitida cada vez que se detecta o verifica un incendio forestal en Cali o sus alrededores:
           </p>
-          <pre className="p-3 bg-slate-950 rounded-lg border border-slate-800 text-[11px] font-mono text-amber-200 overflow-x-auto">
+          <pre className="p-3 bg-neutral-950 rounded-lg border border-neutral-800 text-[11px] font-mono text-amber-300 overflow-x-auto">
 {`{
   "channel": "alerts",
   "timestamp": "2026-09-25T15:30:00.000Z",
@@ -281,28 +281,28 @@ export const StreamApiDocumentation: React.FC = () => {
   }
 }`}
           </pre>
-          <p className="text-[11px] text-slate-500 font-sans leading-relaxed">
-            <code className="text-amber-300 font-mono">riskLevel</code>:{' '}
+          <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
+            <code className="text-amber-400 font-mono">riskLevel</code>:{' '}
             <span className="font-mono">CRITICAL | HIGH | MODERATE | LOW</span> ·{' '}
-            <code className="text-amber-300 font-mono">category</code>:{' '}
+            <code className="text-amber-400 font-mono">category</code>:{' '}
             <span className="font-mono">WILDFIRE | SMOLDERING | AGRICULTURAL_BURN | WEATHER_WARNING | INDUSTRIAL</span>
             {'. El evento SSE se emite como '}
-            <code className="text-cyan-300 font-mono">event: alert</code>.
+            <code className="text-neutral-300 font-mono">event: alert</code>.
           </p>
         </div>
 
         {/* Telemetry JSON Schema */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-2xl space-y-2">
-          <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-            <Activity className="w-4 h-4 text-emerald-400" />
-            <h4 className="font-bold text-sm text-slate-100 font-mono">
+        <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm space-y-2">
+          <div className="flex items-center gap-2 border-b border-neutral-800 pb-2">
+            <Activity className="w-4 h-4 text-emerald-500" />
+            <h4 className="font-bold text-sm text-neutral-100 font-mono">
               Esquema de Telemetría IoT (Canal #telemetry)
             </h4>
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed font-sans">
+          <p className="text-xs text-neutral-400 leading-relaxed font-sans">
             Paquetes periódicos (cada 3.5 segundos) con lecturas físicas de las estaciones de ladera en Cali:
           </p>
-          <pre className="p-3 bg-slate-950 rounded-lg border border-slate-800 text-[11px] font-mono text-emerald-200 overflow-x-auto">
+          <pre className="p-3 bg-neutral-950 rounded-lg border border-neutral-800 text-[11px] font-mono text-emerald-400 overflow-x-auto">
 {`{
   "channel": "telemetry",
   "timestamp": "2026-09-25T15:30:04.500Z",
@@ -324,12 +324,12 @@ export const StreamApiDocumentation: React.FC = () => {
   }
 }`}
           </pre>
-          <p className="text-[11px] text-slate-500 font-sans leading-relaxed">
+          <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
             Unidades: <span className="font-mono">pm25</span> µg/m³ · <span className="font-mono">co</span> ppm ·{' '}
             <span className="font-mono">temp</span> °C · <span className="font-mono">humidity</span> % ·{' '}
             <span className="font-mono">windSpeed</span> km/h.{' '}
             <span className="font-mono">status</span>: critical | elevated | normal. El evento SSE se emite como{' '}
-            <code className="text-cyan-300 font-mono">event: sensor_update</code>.
+            <code className="text-neutral-300 font-mono">event: sensor_update</code>.
           </p>
         </div>
       </div>
