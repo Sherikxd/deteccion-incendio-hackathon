@@ -4,16 +4,7 @@ import {
   Copy,
   Check,
   Terminal,
-  Play,
-  Server,
   Zap,
-  CheckCircle2,
-  ExternalLink,
-  Flame,
-  Activity,
-  Layers,
-  Sparkles,
-  FileCode2,
   BookOpen,
   FileText
 } from 'lucide-react';
@@ -93,7 +84,7 @@ export const ApiIntegrationHub: React.FC = () => {
                 <Zap className="w-5 h-5" />
               </span>
               <div>
-                <h2 className="text-lg font-bold font-mono tracking-wide text-white">
+                <h2 className="text-lg font-bold tracking-wide text-white">
                   INTEGRACIÓN DE LA API EN OTROS PROYECTOS
                 </h2>
                 <p className="text-xs text-neutral-400 mt-0.5">
@@ -104,7 +95,7 @@ export const ApiIntegrationHub: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-3 py-1 rounded-lg flex items-center gap-1.5">
+            <span className="text-[11px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-3 py-1 rounded-lg flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               <span>CORS Habilitado (Sin Bloqueos)</span>
             </span>
@@ -114,7 +105,7 @@ export const ApiIntegrationHub: React.FC = () => {
         {/* 3 Steps Integration Summary */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
           <div className="bg-neutral-950/80 p-3.5 rounded-md border border-neutral-800">
-            <div className="font-mono text-neutral-400 font-bold text-[11px] flex items-center gap-1 mb-1">
+            <div className="text-neutral-400 font-bold text-[11px] flex items-center gap-1 mb-1">
               <span>1. TIEMPO REAL (SSE / WS)</span>
             </div>
             <code className="text-white text-xs block font-mono bg-neutral-900 p-1.5 rounded border border-neutral-800 mb-1.5">
@@ -126,7 +117,7 @@ export const ApiIntegrationHub: React.FC = () => {
           </div>
 
           <div className="bg-neutral-950/80 p-3.5 rounded-md border border-neutral-800">
-            <div className="font-mono text-amber-400 font-bold text-[11px] flex items-center gap-1 mb-1">
+            <div className="text-amber-400 font-bold text-[11px] flex items-center gap-1 mb-1">
               <span>2. CONSULTA REST PUNTUAL</span>
             </div>
             <code className="text-white text-xs block font-mono bg-neutral-900 p-1.5 rounded border border-neutral-800 mb-1.5">
@@ -138,7 +129,7 @@ export const ApiIntegrationHub: React.FC = () => {
           </div>
 
           <div className="bg-neutral-950/80 p-3.5 rounded-md border border-neutral-800">
-            <div className="font-mono text-emerald-500 font-bold text-[11px] flex items-center gap-1 mb-1">
+            <div className="text-emerald-500 font-bold text-[11px] flex items-center gap-1 mb-1">
               <span>3. ENVIAR O VERIFICAR</span>
             </div>
             <code className="text-white text-xs block font-mono bg-neutral-900 p-1.5 rounded border border-neutral-800 mb-1.5">
@@ -156,12 +147,12 @@ export const ApiIntegrationHub: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between pb-3 border-b border-neutral-800 gap-2">
           <div className="flex items-center gap-2">
             <Code2 className="w-4 h-4 text-neutral-400" />
-            <h3 className="font-bold text-sm text-neutral-100 font-mono">
+            <h3 className="font-bold text-sm text-neutral-100">
               Código Listo para Copiar y Pegar en tu Proyecto
             </h3>
           </div>
 
-          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs font-mono">
+          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs">
             <button
               onClick={() => setSelectedLang('python')}
               className={`px-3 py-1 rounded transition ${
@@ -195,7 +186,7 @@ export const ApiIntegrationHub: React.FC = () => {
               const code = getSnippet(selectedLang, baseUrl);
               copyToClipboard(code, `code_${selectedLang}`);
             }}
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono border border-neutral-700 z-10 transition"
+            className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs border border-neutral-700 z-10 transition"
           >
             {copiedKey === `code_${selectedLang}` ? (
               <Check className="w-3.5 h-3.5 text-emerald-500" />
@@ -217,7 +208,7 @@ export const ApiIntegrationHub: React.FC = () => {
           <div className="flex items-center gap-2">
             <Terminal className="w-4 h-4 text-emerald-500" />
             <div>
-              <h3 className="font-bold text-sm text-neutral-100 font-mono">
+              <h3 className="font-bold text-sm text-neutral-100">
                 Consola Interactiva: Probar la API en Vivo
               </h3>
               <p className="text-[11px] text-neutral-400">
@@ -273,7 +264,7 @@ export const ApiIntegrationHub: React.FC = () => {
         </div>
 
         {/* Live response window */}
-        <div className="mt-3 bg-neutral-950 p-4 rounded-md border border-neutral-800 font-mono text-xs">
+        <div className="mt-3 bg-neutral-950 p-4 rounded-md border border-neutral-800 text-xs">
           <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80 mb-2">
             <div className="flex items-center gap-2">
               <span className="text-emerald-500 font-bold">200 OK</span>
@@ -318,7 +309,7 @@ export const ApiIntegrationHub: React.FC = () => {
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-amber-400" />
             <div>
-              <h3 className="font-bold text-sm text-neutral-100 font-mono">
+              <h3 className="font-bold text-sm text-neutral-100">
                 Documentación Completa en Markdown (Carpeta /docs)
               </h3>
               <p className="text-[11px] text-neutral-400">
@@ -331,7 +322,7 @@ export const ApiIntegrationHub: React.FC = () => {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
           <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 hover:border-neutral-700 transition space-y-1">
             <div className="flex items-center justify-between">
               <span className="text-neutral-400 font-bold flex items-center gap-1.5">

@@ -83,3 +83,29 @@ body {
     transform: translateY(0);
   }
 }
+
+/* ===== Accesibilidad =====
+   - Foco visible consistente: el reset de Tailwind elimina el contorno por
+     defecto del navegador y casi ningún componente declara su propio foco.
+   - Respeta `prefers-reduced-motion` (los spinners de carga siguen girando:
+     comunican progreso, no decoración).
+*/
+:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .animate-spin {
+    animation-duration: 1s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

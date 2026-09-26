@@ -231,11 +231,11 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold font-mono text-white tracking-wide">
+                <h2 className="text-base font-bold text-white tracking-wide">
                   Servidor WebSocket & Canal de Stream
                 </h2>
                 <span
-                  className={`text-[11px] font-mono px-2 py-0.5 rounded font-semibold ${
+                  className={`text-[11px] px-2 py-0.5 rounded font-semibold ${
                     isConnected
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                       : 'bg-red-500/20 text-red-300 border border-red-500/30'
@@ -244,7 +244,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                   {isConnected ? 'EN LÍNEA (STREAM ACTIVO)' : 'RECONECTANDO'}
                 </span>
                 {latency !== undefined && (
-                  <span className="text-[10px] font-mono text-neutral-400 bg-neutral-800 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] text-neutral-400 bg-neutral-800 px-1.5 py-0.5 rounded">
                     Ping: {latency} ms
                   </span>
                 )}
@@ -273,7 +273,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-1.5">
             <Filter className="w-3.5 h-3.5 text-neutral-400" />
-            <span className="text-neutral-400 font-mono text-[11px]">Canales de Transmisión:</span>
+            <span className="text-neutral-400 text-[11px]">Canales de Transmisión:</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(['all', 'telemetry', 'incidents', 'analysis', 'alerts'] as StreamChannel[]).map((ch) => (
@@ -307,7 +307,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-neutral-100 font-mono">
+                  <h3 className="font-bold text-sm text-neutral-100">
                     Canal #analysis — Stream IA con OpenRouter
                   </h3>
                   <p className="text-xs text-neutral-400">
@@ -334,7 +334,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
 
             {/* Prompt input */}
             <div className="mt-3 space-y-1.5">
-              <label className="text-[11px] font-mono text-neutral-400">
+              <label className="text-[11px] text-neutral-400">
                 Instrucción Táctica para Inferencia Streaming:
               </label>
               <textarea
@@ -347,14 +347,14 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
 
             {/* Stream trigger button */}
             <div className="mt-2.5 flex items-center justify-between">
-              <span className="text-[11px] text-neutral-400 font-mono">
+              <span className="text-[11px] text-neutral-400">
                 Escenario actual: <span className="text-amber-400 font-semibold">{currentIncident.region}</span>
               </span>
 
               <button
                 onClick={handleStartAiStream}
                 disabled={isStreamingAi}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-sm  transition transform active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 disabled:opacity-50"
               >
                 {isStreamingAi ? (
                   <>
@@ -371,7 +371,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
             </div>
 
             {/* Stream Output Window */}
-            <div className="mt-3 flex-1 min-h-[220px] bg-neutral-950 rounded-md border border-neutral-800 p-3.5 flex flex-col font-mono text-xs">
+            <div className="mt-3 flex-1 min-h-[220px] bg-neutral-950 rounded-md border border-neutral-800 p-3.5 flex flex-col text-xs">
               <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80 mb-2">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-neutral-400"></span>
@@ -395,7 +395,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
 
               <div className="flex-1 overflow-y-auto whitespace-pre-wrap text-neutral-200 leading-relaxed font-sans text-xs max-h-[240px]">
                 {streamedText || (
-                  <span className="text-neutral-400 italic font-mono text-[11px]">
+                  <span className="text-neutral-400 italic text-[11px]">
                     Presiona "Iniciar Stream de Tokens" para emitir el diagnóstico en vivo a través del socket...
                   </span>
                 )}
@@ -424,7 +424,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
                   <Activity className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-neutral-100 font-mono">
+                  <h3 className="font-bold text-sm text-neutral-100">
                     Simulador de Ingestión Externa (Canal #telemetry)
                   </h3>
                   <p className="text-xs text-neutral-400">
@@ -443,7 +443,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 mt-3">
               <div className="sm:col-span-2">
-                <label className="text-[10px] uppercase font-mono text-neutral-400 block mb-1">
+                <label className="text-[10px] uppercase text-neutral-400 block mb-1">
                   Nombre Dispositivo / Sensor
                 </label>
                 <input
@@ -455,7 +455,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
               </div>
 
               <div>
-                <label className="text-[10px] uppercase font-mono text-neutral-400 block mb-1">
+                <label className="text-[10px] uppercase text-neutral-400 block mb-1">
                   PM2.5 Humo (µg/m³)
                 </label>
                 <input
@@ -467,7 +467,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
               </div>
 
               <div>
-                <label className="text-[10px] uppercase font-mono text-neutral-400 block mb-1">
+                <label className="text-[10px] uppercase text-neutral-400 block mb-1">
                   Viento (km/h & Dir)
                 </label>
                 <div className="flex gap-1">
@@ -504,12 +504,12 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
           <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
             <div className="flex items-center gap-2">
               <Terminal className="w-4 h-4 text-amber-400" />
-              <h3 className="font-bold text-sm text-neutral-100 font-mono">
+              <h3 className="font-bold text-sm text-neutral-100">
                 Terminal de Tramas WebSocket
               </h3>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-neutral-400 bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800">
+              <span className="text-[10px] text-neutral-400 bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800">
                 {filteredMessages.length} tramas
               </span>
               <button
@@ -598,12 +598,12 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
         <div className="flex flex-wrap items-center justify-between pb-3 border-b border-neutral-800 gap-2">
           <div className="flex items-center gap-2">
             <Code2 className="w-4 h-4 text-neutral-400" />
-            <h3 className="font-bold text-sm text-neutral-100 font-mono">
+            <h3 className="font-bold text-sm text-neutral-100">
               Integración con Otras Aplicaciones (SDK / Snippets)
             </h3>
           </div>
 
-          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs font-mono">
+          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs">
             <button
               onClick={() => setCodeLanguage('python')}
               className={`px-3 py-1 rounded transition ${
@@ -645,7 +645,7 @@ export const WebSocketStreamStudio: React.FC<WebSocketStreamStudioProps> = ({
               const code = getSnippetCode(codeLanguage, currentWsUrl);
               copyToClipboard(code, `code_${codeLanguage}`);
             }}
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs border border-neutral-700 font-mono z-10"
+            className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs border border-neutral-700 z-10"
           >
             {copiedKey === `code_${codeLanguage}` ? (
               <Check className="w-3.5 h-3.5 text-emerald-500" />

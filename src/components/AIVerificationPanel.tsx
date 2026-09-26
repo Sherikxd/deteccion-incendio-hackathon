@@ -11,7 +11,6 @@ import {
   Copy,
   Check,
   Zap,
-  Clock,
   Compass,
   FileCode,
   RadioTower,
@@ -32,7 +31,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
   onAlertVerified
 }) => {
   const [selectedModel, setSelectedModel] = useState<string>(AVAILABLE_MODELS[0].id);
-  const [temperature, setTemperature] = useState<number>(0.1);
+  const [temperature] = useState<number>(0.1);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [verificationResult, setVerificationResult] = useState<AIVerificationResult | null>(null);
@@ -110,10 +109,10 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-sm text-neutral-100 uppercase tracking-wide font-mono">
+              <h3 className="font-semibold text-sm text-neutral-100 uppercase tracking-wide">
                 Verificador Táctico IA
               </h3>
-              <span className="text-[10px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded font-mono">
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded">
                 MAQUETADO VALLE DEL CAUCA
               </span>
             </div>
@@ -126,7 +125,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
         {/* Action Controls & Model Switcher */}
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1.5 bg-neutral-800/80 px-2 py-1 rounded-lg border border-neutral-700 text-xs">
-            <span className="text-[11px] text-neutral-400 font-mono hidden sm:inline">Modelo:</span>
+            <span className="text-[11px] text-neutral-400 hidden sm:inline">Modelo:</span>
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
@@ -143,7 +142,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
           <button
             onClick={handleRunVerification}
             disabled={isLoading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-sm  transition transform active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-sm transition transform active:scale-95 disabled:opacity-50"
           >
             {isLoading ? (
               <>
@@ -162,7 +161,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
 
       {/* Quick Dispatch Simulation Actions Bar */}
       <div className="mt-2.5 py-2 px-3 bg-neutral-950/60 rounded-lg border border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <span className="text-[11px] text-neutral-400 font-mono flex items-center gap-1">
+        <span className="text-[11px] text-neutral-400 flex items-center gap-1">
           <Send className="w-3 h-3 text-neutral-400" /> Despacho Inmediato (Maqueta):
         </span>
         <div className="flex flex-wrap items-center gap-2">
@@ -233,14 +232,14 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
 
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm tracking-wide font-mono text-white">
+                  <span className="font-bold text-sm tracking-wide text-white">
                     {verificationResult.classification === 'VERIFIED_WILDFIRE' && 'INCENDIO DE COBERTURA VEGETAL VERIFICADO'}
                     {verificationResult.classification === 'EARLY_WARNING_SMOLDER' && 'ALERTA TEMPRANA BAJO DOSEL (RED IOT CALI)'}
                     {verificationResult.classification === 'WATCH_ELEVATED_RISK' && 'FOCO EN OBSERVACIÓN (SIN SENSOR CERCANO)'}
                     {verificationResult.classification === 'FALSE_POSITIVE_LIKELY' && 'FALSO POSITIVO IDENTIFICADO (QUEMA AGRÍCOLA)'}
                   </span>
                   <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono ${
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                       verificationResult.riskLevel === 'CRITICAL'
                         ? 'bg-red-500 text-white'
                         : verificationResult.riskLevel === 'HIGH'
@@ -263,14 +262,14 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
             {/* Score Badges */}
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <div className="text-[10px] uppercase font-mono text-neutral-400">Nivel Confianza IA</div>
+                <div className="text-[10px] uppercase text-neutral-400">Nivel Confianza IA</div>
                 <div className="text-lg font-bold font-mono text-emerald-500">
                   {verificationResult.confidenceScore}%
                 </div>
               </div>
               <div className="w-px h-8 bg-neutral-800"></div>
               <div className="text-right">
-                <div className="text-[10px] uppercase font-mono text-neutral-400">Prob. Falso Positivo</div>
+                <div className="text-[10px] uppercase text-neutral-400">Prob. Falso Positivo</div>
                 <div
                   className={`text-lg font-bold font-mono ${
                     verificationResult.falsePositiveProbability > 50 ? 'text-amber-400' : 'text-neutral-400'
@@ -332,7 +331,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
             {activeTab === 'diagnosis' && (
               <div className="space-y-3">
                 <div className="bg-neutral-950/60 p-3 rounded-lg border border-neutral-800">
-                  <div className="text-[11px] font-semibold text-neutral-400 uppercase font-mono mb-1">
+                  <div className="text-[11px] font-semibold text-neutral-400 uppercase mb-1">
                     Dictamen Analítico de la IA (Valle del Cauca):
                   </div>
                   <p className="text-neutral-200 leading-relaxed text-xs">
@@ -342,7 +341,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="bg-neutral-950/60 p-3 rounded-lg border border-neutral-800 space-y-1.5">
-                    <div className="text-[11px] font-semibold text-neutral-300 uppercase font-mono flex items-center gap-1.5">
+                    <div className="text-[11px] font-semibold text-neutral-300 uppercase flex items-center gap-1.5">
                       <Compass className="w-3.5 h-3.5 text-neutral-400" />
                       <span>Correlación Satélite ↔ Sensor Cali</span>
                     </div>
@@ -355,7 +354,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
                     <div className="text-neutral-400">
                       Alineación Vector Viento Pacífico:{' '}
                       <span
-                        className={`font-semibold font-mono ${
+                        className={`font-semibold ${
                           verificationResult.correlation.windPlumeVectorMatch
                             ? 'text-red-400'
                             : 'text-emerald-500'
@@ -372,7 +371,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
                   </div>
 
                   <div className="bg-neutral-950/60 p-3 rounded-lg border border-neutral-800 space-y-1.5">
-                    <div className="text-[11px] font-semibold text-neutral-300 uppercase font-mono flex items-center gap-1.5">
+                    <div className="text-[11px] font-semibold text-neutral-300 uppercase flex items-center gap-1.5">
                       <Flame className="w-3.5 h-3.5 text-amber-500" />
                       <span>Dinámica del Fuego en Ladera</span>
                     </div>
@@ -402,7 +401,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
             {activeTab === 'tactical' && (
               <div className="space-y-3">
                 <div className="bg-neutral-950/60 p-3 rounded-lg border border-neutral-800">
-                  <div className="text-[11px] font-semibold text-red-400 uppercase font-mono mb-2 flex items-center gap-1.5">
+                  <div className="text-[11px] font-semibold text-red-400 uppercase mb-2 flex items-center gap-1.5">
                     <ShieldAlert className="w-3.5 h-3.5" />
                     <span>Infraestructura & Bienes en Amenaza en Cali:</span>
                   </div>
@@ -417,7 +416,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
                 </div>
 
                 <div className="bg-neutral-950/60 p-3 rounded-lg border border-neutral-800">
-                  <div className="text-[11px] font-semibold text-neutral-400 uppercase font-mono mb-2 flex items-center gap-1.5">
+                  <div className="text-[11px] font-semibold text-neutral-400 uppercase mb-2 flex items-center gap-1.5">
                     <Flame className="w-3.5 h-3.5" />
                     <span>Recomendaciones Tácticas para Bomberos Cali & CVC:</span>
                   </div>
@@ -438,7 +437,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
                 {/* SMS CAP Notice */}
                 <div className="bg-neutral-950/70 p-3 rounded-lg border border-neutral-800">
                   <div className="flex items-center justify-between mb-1.5">
-                    <div className="text-[11px] font-semibold text-neutral-400 uppercase font-mono flex items-center gap-1.5">
+                    <div className="text-[11px] font-semibold text-neutral-400 uppercase flex items-center gap-1.5">
                       <BellRing className="w-3.5 h-3.5" />
                       <span>Mensaje Celular de Emergencia / CAP (Alcaldía de Cali / DAGRD)</span>
                     </div>
@@ -463,7 +462,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
                 {/* Civil Protection Full Notice */}
                 <div className="bg-neutral-950/70 p-3 rounded-lg border border-neutral-800">
                   <div className="flex items-center justify-between mb-1.5">
-                    <div className="text-[11px] font-semibold text-neutral-400 uppercase font-mono flex items-center gap-1.5">
+                    <div className="text-[11px] font-semibold text-neutral-400 uppercase flex items-center gap-1.5">
                       <ShieldAlert className="w-3.5 h-3.5" />
                       <span>Boletín Oficial de Gestión del Riesgo (DAGRD Cali / CVC)</span>
                     </div>
@@ -485,7 +484,7 @@ export const AIVerificationPanel: React.FC<AIVerificationPanelProps> = ({
                 {/* Firefighter Radio Dispatch Bulletin */}
                 <div className="bg-neutral-950/70 p-3 rounded-lg border border-neutral-800">
                   <div className="flex items-center justify-between mb-1.5">
-                    <div className="text-[11px] font-semibold text-emerald-500 uppercase font-mono flex items-center gap-1.5">
+                    <div className="text-[11px] font-semibold text-emerald-500 uppercase flex items-center gap-1.5">
                       <RadioTower className="w-3.5 h-3.5" />
                       <span>Despacho Radial a Unidades Forestales Bomberos Cali (X-1)</span>
                     </div>

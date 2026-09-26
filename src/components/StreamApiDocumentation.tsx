@@ -40,7 +40,7 @@ export const StreamApiDocumentation: React.FC = () => {
                 <BookOpen className="w-5 h-5" />
               </span>
               <div>
-                <h2 className="text-lg font-bold font-mono tracking-wide text-white">
+                <h2 className="text-lg font-bold tracking-wide text-white">
                   DOCUMENTACIÓN DE INTEGRACIÓN: CANAL /stream
                 </h2>
                 <p className="text-xs text-neutral-400">
@@ -51,7 +51,7 @@ export const StreamApiDocumentation: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
+            <span className="text-[11px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
               HTTP/1.1 & HTTP/2 SSE + WebSockets
             </span>
           </div>
@@ -60,11 +60,11 @@ export const StreamApiDocumentation: React.FC = () => {
         {/* Quick Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
           <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 space-y-1">
-            <div className="text-[10px] font-mono uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
+            <div className="text-[10px] uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
               <Wifi className="w-3.5 h-3.5" />
               <span>1. Endpoint Principal /stream</span>
             </div>
-            <div className="font-mono text-white text-xs select-all">
+            <div className="text-white text-xs select-all">
               GET {streamUrl}
             </div>
             <p className="text-neutral-400 text-[11px] leading-relaxed">
@@ -73,11 +73,11 @@ export const StreamApiDocumentation: React.FC = () => {
           </div>
 
           <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 space-y-1">
-            <div className="text-[10px] font-mono uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
+            <div className="text-[10px] uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
               <Flame className="w-3.5 h-3.5" />
               <span>2. Emisión de Alertas Externas</span>
             </div>
-            <div className="font-mono text-white text-xs select-all">
+            <div className="text-white text-xs select-all">
               POST {streamUrl}
             </div>
             <p className="text-neutral-400 text-[11px] leading-relaxed">
@@ -86,11 +86,11 @@ export const StreamApiDocumentation: React.FC = () => {
           </div>
 
           <div className="bg-neutral-950/70 p-3.5 rounded-md border border-neutral-800 space-y-1">
-            <div className="text-[10px] font-mono uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
+            <div className="text-[10px] uppercase text-neutral-400 font-semibold flex items-center gap-1.5">
               <Server className="w-3.5 h-3.5" />
               <span>3. Socket Bidireccional</span>
             </div>
-            <div className="font-mono text-white text-xs select-all">
+            <div className="text-white text-xs select-all">
               WS {wsUrl}
             </div>
             <p className="text-neutral-400 text-[11px] leading-relaxed">
@@ -105,13 +105,13 @@ export const StreamApiDocumentation: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between pb-3 border-b border-neutral-800 gap-2">
           <div className="flex items-center gap-2">
             <Code2 className="w-4 h-4 text-neutral-400" />
-            <h3 className="font-bold text-sm text-neutral-100 font-mono">
+            <h3 className="font-bold text-sm text-neutral-100">
               Cómo Conectarse al /stream desde Cualquier Aplicación
             </h3>
           </div>
 
           {/* Language Switcher */}
-          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs font-mono">
+          <div className="flex bg-neutral-950 p-1 rounded-lg border border-neutral-800 text-xs">
             {(['curl', 'javascript', 'python', 'nodejs', 'golang'] as const).map((lang) => (
               <button
                 key={lang}
@@ -135,7 +135,7 @@ export const StreamApiDocumentation: React.FC = () => {
               const code = getCodeSnippet(selectedLanguage, streamUrl, wsUrl);
               copyToClipboard(code, `code_${selectedLanguage}`);
             }}
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono border border-neutral-700 z-10 transition"
+            className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs border border-neutral-700 z-10 transition"
           >
             {copiedKey === `code_${selectedLanguage}` ? (
               <Check className="w-3.5 h-3.5 text-emerald-500" />
@@ -153,13 +153,13 @@ export const StreamApiDocumentation: React.FC = () => {
 
       {/* API Endpoints Table */}
       <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm space-y-4">
-        <h3 className="font-semibold text-sm text-neutral-400 font-mono uppercase tracking-wide flex items-center gap-2">
+        <h3 className="font-semibold text-sm text-neutral-400 uppercase tracking-wide flex items-center gap-2">
           <Terminal className="w-4 h-4" />
           <span>Matriz de Endpoints y Parámetros del /stream</span>
         </h3>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono border-collapse">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-neutral-800 text-neutral-400 bg-neutral-950/60">
                 <th className="py-2.5 px-3">Método</th>
@@ -246,7 +246,7 @@ export const StreamApiDocumentation: React.FC = () => {
         <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm space-y-2">
           <div className="flex items-center gap-2 border-b border-neutral-800 pb-2">
             <Flame className="w-4 h-4 text-red-400" />
-            <h4 className="font-bold text-sm text-neutral-100 font-mono">
+            <h4 className="font-bold text-sm text-neutral-100">
               Esquema de Alerta de Incendio (Canal #alerts)
             </h4>
           </div>
@@ -283,9 +283,9 @@ export const StreamApiDocumentation: React.FC = () => {
           </pre>
           <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
             <code className="text-amber-400 font-mono">riskLevel</code>:{' '}
-            <span className="font-mono">CRITICAL | HIGH | MODERATE | LOW</span> ·{' '}
+            <span>CRITICAL | HIGH | MODERATE | LOW</span> ·{' '}
             <code className="text-amber-400 font-mono">category</code>:{' '}
-            <span className="font-mono">WILDFIRE | SMOLDERING | AGRICULTURAL_BURN | WEATHER_WARNING | INDUSTRIAL</span>
+            <span>WILDFIRE | SMOLDERING | AGRICULTURAL_BURN | WEATHER_WARNING | INDUSTRIAL</span>
             {'. El evento SSE se emite como '}
             <code className="text-neutral-300 font-mono">event: alert</code>.
           </p>
@@ -295,7 +295,7 @@ export const StreamApiDocumentation: React.FC = () => {
         <div className="bg-neutral-900/90 border border-neutral-800 rounded-md p-5 shadow-sm space-y-2">
           <div className="flex items-center gap-2 border-b border-neutral-800 pb-2">
             <Activity className="w-4 h-4 text-emerald-500" />
-            <h4 className="font-bold text-sm text-neutral-100 font-mono">
+            <h4 className="font-bold text-sm text-neutral-100">
               Esquema de Telemetría IoT (Canal #telemetry)
             </h4>
           </div>
@@ -325,10 +325,10 @@ export const StreamApiDocumentation: React.FC = () => {
 }`}
           </pre>
           <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
-            Unidades: <span className="font-mono">pm25</span> µg/m³ · <span className="font-mono">co</span> ppm ·{' '}
-            <span className="font-mono">temp</span> °C · <span className="font-mono">humidity</span> % ·{' '}
-            <span className="font-mono">windSpeed</span> km/h.{' '}
-            <span className="font-mono">status</span>: critical | elevated | normal. El evento SSE se emite como{' '}
+            Unidades: <span>pm25</span> µg/m³ · <span>co</span> ppm ·{' '}
+            <span>temp</span> °C · <span>humidity</span> % ·{' '}
+            <span>windSpeed</span> km/h.{' '}
+            <span>status</span>: critical | elevated | normal. El evento SSE se emite como{' '}
             <code className="text-neutral-300 font-mono">event: sensor_update</code>.
           </p>
         </div>
@@ -337,7 +337,12 @@ export const StreamApiDocumentation: React.FC = () => {
   );
 };
 
-export function getCodeSnippet(lang: string, streamUrl: string, wsUrl: string) {
+/**
+ * Genera un snippet de integración. `streamUrl` es el endpoint SSE; `wsUrl` se
+ * mantiene en la firma porque es parte del contrato consumido por los tests y
+ * por clientes externos (sólo lo usan los lenguajes con cliente WebSocket).
+ */
+export function getCodeSnippet(lang: string, streamUrl: string, _wsUrl: string) {
   if (lang === 'curl') {
     return `# 1. Conectarse y escuchar el flujo en vivo de ALERTAS con cURL:
 curl -N -H "Accept: text/event-stream" "${streamUrl}?channel=alerts"

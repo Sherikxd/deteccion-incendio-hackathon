@@ -19,10 +19,11 @@ import {
 import { copyTextToClipboard } from '../utils/copyToClipboard';
 
 interface StreamLiveChannelProps {
+  /** Título del incidente activo (prop de compatibilidad: hoy el canal es global). */
   currentIncidentTitle?: string;
 }
 
-export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentIncidentTitle }) => {
+export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [activeChannel, setActiveChannel] = useState<'all' | 'alerts' | 'telemetry' | 'analysis'>('all');
   const [events, setEvents] = useState<any[]>([]);
@@ -244,11 +245,11 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold font-mono text-white tracking-wide">
+                <h2 className="text-base font-bold text-white tracking-wide">
                   Canal de Streaming /stream (Tiempo Real)
                 </h2>
                 <span
-                  className={`text-[11px] font-mono px-2 py-0.5 rounded font-semibold ${
+                  className={`text-[11px] px-2 py-0.5 rounded font-semibold ${
                     isConnected
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                       : 'bg-red-500/20 text-red-300 border border-red-500/30'
@@ -256,7 +257,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
                 >
                   {isConnected ? 'EN LÍNEA (STREAM SSE ACTIVO)' : 'DESCONECTADO'}
                 </span>
-                <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+                <span className="text-[10px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
                   {activeListeners} Clientes Conectados
                 </span>
               </div>
@@ -268,7 +269,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
 
           {/* Quick Connect / Disconnect and Copy URL */}
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-neutral-950 px-2.5 py-1.5 rounded-lg border border-neutral-800 text-xs font-mono">
+            <div className="flex items-center gap-1.5 bg-neutral-950 px-2.5 py-1.5 rounded-lg border border-neutral-800 text-xs">
               <code className="text-amber-400">{streamFullUrl}</code>
               <button
                 onClick={() => copyToClipboard(streamFullUrl, 'streamurl')}
@@ -287,6 +288,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
                 rel="noreferrer"
                 className="p-1 rounded hover:bg-neutral-800 text-neutral-400 hover:text-white transition"
                 title="Abrir /stream directo en nueva pestaña"
+                aria-label="Abrir /stream directo en una pestaña nueva"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
@@ -316,7 +318,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-1.5">
             <Filter className="w-3.5 h-3.5 text-neutral-400" />
-            <span className="text-neutral-400 font-mono text-[11px]">Filtrar Canal de /stream:</span>
+            <span className="text-neutral-400 text-[11px]">Filtrar Canal de /stream:</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(['all', 'alerts', 'telemetry', 'analysis'] as const).map((ch) => (
@@ -362,13 +364,13 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
           <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
             <div className="flex items-center gap-2">
               <BellRing className="w-4 h-4 text-amber-400" />
-              <h3 className="font-bold text-sm text-neutral-100 font-mono">
+              <h3 className="font-bold text-sm text-neutral-100">
                 Flujo de Eventos en Vivo ({events.length} recibidos)
               </h3>
             </div>
             <button
               onClick={() => setEvents([])}
-              className="text-neutral-400 hover:text-white text-xs font-mono px-2 py-1 rounded hover:bg-neutral-800 transition"
+              className="text-neutral-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-neutral-800 transition"
             >
               Limpiar Flujo
             </button>
@@ -401,7 +403,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
                             <Flame className="w-3.5 h-3.5" />
                           </span>
                           <div>
-                            <span className="text-xs font-semibold font-mono text-red-300 uppercase">
+                            <span className="text-xs font-semibold text-red-300 uppercase">
                               {alertData.sector}
                             </span>
                             <div className="text-[10px] text-neutral-400">
@@ -411,7 +413,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
                         </div>
 
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono ${
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                             alertData.riskLevel === 'CRITICAL'
                               ? 'bg-red-500 text-white'
                               : 'bg-amber-500 text-black'
@@ -425,7 +427,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
                         {alertData.headline}
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 py-1.5 px-2 bg-neutral-950/70 rounded-lg text-center font-mono text-[11px] border border-neutral-800">
+                      <div className="grid grid-cols-3 gap-2 py-1.5 px-2 bg-neutral-950/70 rounded-lg text-center text-[11px] border border-neutral-800">
                         <div>
                           <div className="text-[9px] text-neutral-400">Potencia FRP</div>
                           <div className="font-bold text-red-400">{alertData.frpMw} MW</div>
@@ -444,7 +446,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
 
                       {alertData.tacticalAction && (
                         <div className="text-[11px] text-neutral-300 bg-neutral-900/80 p-2 rounded border border-neutral-800/80">
-                          <strong className="text-amber-400 font-mono">Despacho Bomberos Cali:</strong>{' '}
+                          <strong className="text-amber-400">Despacho Bomberos Cali:</strong>{' '}
                           {alertData.tacticalAction}
                         </div>
                       )}
@@ -457,7 +459,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
                   return (
                     <div
                       key={evt.id}
-                      className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-950 text-xs font-mono flex items-center justify-between gap-2"
+                      className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-950 text-xs flex items-center justify-between gap-2"
                     >
                       <div className="flex items-center gap-2">
                         <Activity className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
@@ -501,7 +503,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
             <div className="flex items-center gap-2 pb-2.5 border-b border-neutral-800">
               <Send className="w-4 h-4 text-red-400" />
               <div>
-                <h3 className="font-bold text-sm text-neutral-100 font-mono">
+                <h3 className="font-bold text-sm text-neutral-100">
                   Emitir Alerta a /stream (Simulador)
                 </h3>
                 <p className="text-[11px] text-neutral-400">
@@ -510,7 +512,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
               </div>
             </div>
 
-            <div className="mt-3 space-y-2.5 text-xs font-mono">
+            <div className="mt-3 space-y-2.5 text-xs">
               <div>
                 <label className="text-[10px] text-neutral-400 uppercase block mb-1">Sector de Cali / Valle</label>
                 <input
@@ -581,7 +583,7 @@ export const StreamLiveChannel: React.FC<StreamLiveChannelProps> = ({ currentInc
             <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
               <div className="flex items-center gap-1.5">
                 <Terminal className="w-4 h-4 text-neutral-400" />
-                <span className="font-bold text-xs font-mono text-neutral-200">
+                <span className="font-bold text-xs text-neutral-200">
                   Conexión Inmediata con cURL
                 </span>
               </div>

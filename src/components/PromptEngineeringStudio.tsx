@@ -84,7 +84,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
             <Cpu className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white font-mono tracking-wide flex items-center gap-2">
+            <h2 className="text-base font-bold text-white tracking-wide flex items-center gap-2">
               <span>PROMPT MASTER & INGENIERÍA DE INSTRUCCIONES</span>
               <span className="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-300 border border-red-500/30">
                 PRODUCCIÓN OPENROUTER
@@ -150,7 +150,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
         <div className="space-y-3">
           <div className="flex items-center justify-between bg-neutral-950/80 p-3 rounded-lg border border-neutral-800 gap-3 flex-wrap">
             <div className="text-xs text-neutral-300">
-              <span className="font-semibold text-amber-400 font-mono">Reglas Clave del Prompt:</span> Fusión FIRMS + IoT downwind, descarte de falsos positivos (quemas/industrias), estimación de propagación y salida JSON estricta.
+              <span className="font-semibold text-amber-400">Reglas Clave del Prompt:</span> Fusión FIRMS + IoT downwind, descarte de falsos positivos (quemas/industrias), estimación de propagación y salida JSON estricta.
             </div>
             <button
               onClick={() => copyToClipboard(effectiveSystemPrompt, 'system_prompt')}
@@ -171,7 +171,7 @@ export const PromptEngineeringStudio: React.FC<PromptEngineeringStudioProps> = (
           </div>
 
           {/* Optional rule blocks toggled into the system prompt */}
-          <div className="bg-neutral-950/70 p-3 rounded-lg border border-neutral-800 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono">
+          <div className="bg-neutral-950/70 p-3 rounded-lg border border-neutral-800 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
             <span className="text-neutral-400 uppercase text-[10px] font-semibold">Reglas opcionales:</span>
 
             <label className="flex items-center gap-2 text-neutral-300 cursor-pointer select-none">

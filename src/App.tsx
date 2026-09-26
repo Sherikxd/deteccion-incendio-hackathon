@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { MOCK_INCIDENTS } from './data/mockIncidents';
-import { FireIncidentScenario, IoTSensorNode, AIVerificationResult } from './types/fire';
+import { FireIncidentScenario, IoTSensorNode } from './types/fire';
 import { MapViewer } from './components/MapViewer';
 import { IoTTelemetryPanel } from './components/IoTTelemetryPanel';
 import { AIVerificationPanel } from './components/AIVerificationPanel';
@@ -47,15 +47,20 @@ export default function App() {
   >('map');
 
   const [selectedSensor, setSelectedSensor] = useState<IoTSensorNode | undefined>(undefined);
-  const [lastVerificationResult, setLastVerificationResult] = useState<AIVerificationResult | null>(null);
 
   const currentIncident: FireIncidentScenario =
     MOCK_INCIDENTS.find((inc) => inc.id === selectedIncidentId) || MOCK_INCIDENTS[0];
 
-  const totalFRP = currentIncident.hotspots.reduce((acc, h) => acc + h.frp, 0);
-
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-500 selection:text-black">
+      {/* Enlace de salto: primer foco de teclado, oculto a la vista */}
+      <a
+        href="#contenido"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[3000] focus:bg-neutral-800 focus:text-white focus:px-3 focus:py-2 focus:rounded focus:text-sm focus:shadow-sm"
+      >
+        Saltar al contenido
+      </a>
+
       {/* Top Navbar */}
       <header className="border-b border-neutral-800 bg-neutral-900 sticky top-0 z-[2000]">
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
@@ -69,7 +74,7 @@ export default function App() {
                 <h1 className="text-[15px] font-semibold tracking-tight text-white">
                   Nature<span className="text-amber-500">Intelligence</span>
                 </h1>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-emerald-600/40 text-emerald-500 hidden sm:inline">
+                <span className="text-[10px] px-2 py-0.5 rounded border border-emerald-600/40 text-emerald-500 hidden sm:inline">
                   CALI EN VIVO
                 </span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-500/10 text-neutral-400 border border-neutral-600/40 hidden md:inline">
@@ -83,9 +88,14 @@ export default function App() {
           </div>
 
           {/* MAIN DUAL MODE TOGGLE: DATOS REALES VS DATOS SIMULADOS (SANDBOX) */}
-          <div className="flex items-center bg-neutral-950 p-1 rounded-md border border-neutral-800 text-xs font-mono shrink-0">
+          <div
+            role="group"
+            aria-label="Modo de datos"
+            className="flex items-center bg-neutral-950 p-1 rounded-md border border-neutral-800 text-xs shrink-0"
+          >
             <button
               onClick={() => setSystemMode('real')}
+              aria-pressed={systemMode === 'real'}
               className={`flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3.5 rounded-lg font-medium transition ${
                 systemMode === 'real'
                   ? 'bg-neutral-800 text-white'
@@ -99,6 +109,7 @@ export default function App() {
 
             <button
               onClick={() => setSystemMode('simulation')}
+              aria-pressed={systemMode === 'simulation'}
               className={`flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3.5 rounded-lg font-medium transition ${
                 systemMode === 'simulation'
                   ? 'bg-neutral-800 text-white'
@@ -116,11 +127,18 @@ export default function App() {
       {/* Sub-Navigation Bar for Real Data Mode */}
       {systemMode === 'real' && (
         <div className="bg-neutral-900/60 border-b border-neutral-800/80 px-4 py-2 text-xs">
-          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 font-mono">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
             {/* Real Data View Selector — scroll horizontal en móvil, wrap en escritorio */}
-            <div className="flex items-center gap-1 bg-neutral-950 p-1 rounded-lg border border-neutral-800 flex-nowrap overflow-x-auto no-scrollbar lg:flex-wrap lg:overflow-visible">
+            <div
+              role="tablist"
+              aria-label="Vistas de datos reales"
+              className="flex items-center gap-1 bg-neutral-950 p-1 rounded-lg border border-neutral-800 flex-nowrap overflow-x-auto no-scrollbar lg:flex-wrap lg:overflow-visible"
+            >
               <button
                 onClick={() => setRealDataTab('map')}
+                role="tab"
+                aria-selected={realDataTab === 'map'}
+                aria-controls="panel-vistas"
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'map'
                     ? 'bg-neutral-800 text-white'
@@ -134,6 +152,9 @@ export default function App() {
 
               <button
                 onClick={() => setRealDataTab('ai_decisions')}
+                role="tab"
+                aria-selected={realDataTab === 'ai_decisions'}
+                aria-controls="panel-vistas"
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'ai_decisions'
                     ? 'bg-neutral-800 text-white'
@@ -147,6 +168,9 @@ export default function App() {
 
               <button
                 onClick={() => setRealDataTab('sensors')}
+                role="tab"
+                aria-selected={realDataTab === 'sensors'}
+                aria-controls="panel-vistas"
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'sensors'
                     ? 'bg-neutral-800 text-white'
@@ -160,6 +184,9 @@ export default function App() {
 
               <button
                 onClick={() => setRealDataTab('cameras')}
+                role="tab"
+                aria-selected={realDataTab === 'cameras'}
+                aria-controls="panel-vistas"
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'cameras'
                     ? 'bg-neutral-800 text-white'
@@ -173,6 +200,9 @@ export default function App() {
 
               <button
                 onClick={() => setRealDataTab('whatsapp')}
+                role="tab"
+                aria-selected={realDataTab === 'whatsapp'}
+                aria-controls="panel-vistas"
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'whatsapp'
                     ? 'bg-neutral-800 text-white'
@@ -186,6 +216,9 @@ export default function App() {
 
               <button
                 onClick={() => setRealDataTab('stream')}
+                role="tab"
+                aria-selected={realDataTab === 'stream'}
+                aria-controls="panel-vistas"
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'stream'
                     ? 'bg-neutral-800 text-white'
@@ -199,6 +232,9 @@ export default function App() {
 
               <button
                 onClick={() => setRealDataTab('ws')}
+                role="tab"
+                aria-selected={realDataTab === 'ws'}
+                aria-controls="panel-vistas"
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'ws'
                     ? 'bg-neutral-800 text-white'
@@ -212,6 +248,9 @@ export default function App() {
 
               <button
                 onClick={() => setRealDataTab('api')}
+                role="tab"
+                aria-selected={realDataTab === 'api'}
+                aria-controls="panel-vistas"
                 className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-1 rounded text-xs font-semibold transition shrink-0 whitespace-nowrap ${
                   realDataTab === 'api'
                     ? 'bg-neutral-800 text-white'
@@ -232,6 +271,7 @@ export default function App() {
               {MOCK_INCIDENTS.map((inc) => (
                 <button
                   key={inc.id}
+                  aria-pressed={selectedIncidentId === inc.id}
                   onClick={() => {
                     setSelectedIncidentId(inc.id);
                     setSelectedSensor(undefined);
@@ -251,12 +291,12 @@ export default function App() {
       )}
 
       {/* Main Content View */}
-      <main className="max-w-7xl mx-auto px-4 py-4 flex-1 w-full">
+      <main id="contenido" tabIndex={-1} className="max-w-7xl mx-auto px-4 py-4 flex-1 w-full">
         {/* ========================================= */}
         {/* MODE 1: DATOS REALES (En Producción)     */}
         {/* ========================================= */}
         {systemMode === 'real' && (
-          <div className="space-y-4">
+          <div id="panel-vistas" role="tabpanel" className="space-y-4">
             {realDataTab === 'map' && (
               <div className="space-y-4">
                 {/* Top row: Map and Telemetry */}
@@ -279,10 +319,7 @@ export default function App() {
 
                 {/* Bottom row: Clear AI Verification & Dispatch */}
                 <div className="w-full">
-                  <AIVerificationPanel
-                    incident={currentIncident}
-                    onAlertVerified={(result) => setLastVerificationResult(result)}
-                  />
+                  <AIVerificationPanel incident={currentIncident} />
                 </div>
               </div>
             )}
@@ -336,7 +373,7 @@ export default function App() {
       </main>
 
       {/* Clean Footer */}
-      <footer className="border-t border-neutral-900 bg-neutral-950 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] px-4 text-center text-xs text-neutral-400 font-mono">
+      <footer className="border-t border-neutral-900 bg-neutral-950 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] px-4 text-center text-xs text-neutral-400">
         NatureIntelligence • Santiago de Cali & Valle del Cauca • Monitoreo Real vs Sandbox de Pruebas • Canal <code className="text-neutral-400 font-semibold">/stream</code>
       </footer>
     </div>

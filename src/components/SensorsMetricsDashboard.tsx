@@ -4,9 +4,6 @@ import {
   Wind,
   Thermometer,
   Droplets,
-  AlertTriangle,
-  Radio,
-  Flame,
   CheckCircle2,
   Cpu,
   Send,
@@ -14,9 +11,7 @@ import {
   Copy,
   Check,
   RefreshCw,
-  Compass,
   Gauge,
-  Wifi,
   ExternalLink
 } from 'lucide-react';
 import { copyTextToClipboard } from '../utils/copyToClipboard';
@@ -38,7 +33,7 @@ interface SensorItem {
 export const SensorsMetricsDashboard: React.FC = () => {
   const [sensors, setSensors] = useState<SensorItem[]>([]);
   const [selectedSensorId, setSelectedSensorId] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [, setIsLoading] = useState<boolean>(true);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   // Manual test ingest form state
@@ -154,10 +149,10 @@ export const SensorsMetricsDashboard: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold font-mono text-white">
+                <h2 className="text-lg font-bold text-white">
                   RED DE SENSORES IoT & TELEMETRÍA AMBIENTAL CALI
                 </h2>
-                <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2.5 py-0.5 rounded font-semibold flex items-center gap-1.5">
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2.5 py-0.5 rounded font-semibold flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                   <span>{sensors.length} Estaciones en Línea</span>
                 </span>
@@ -171,7 +166,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={fetchSensors}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono border border-neutral-700 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs border border-neutral-700 transition"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Refrescar</span>
@@ -190,7 +185,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
         </div>
 
         {/* Sensor Station Selection Tabs */}
-        <div className="mt-4 flex flex-wrap gap-2 text-xs font-mono">
+        <div className="mt-4 flex flex-wrap gap-2 text-xs">
           {sensors.map((sensor) => {
             const isCrit = sensor.status === 'critical';
             const isElev = sensor.status === 'elevated';
@@ -233,7 +228,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
       {selectedSensor && (
         <div className="space-y-4">
           {/* Station Title Header */}
-          <div className="bg-neutral-900/60 border border-neutral-800 rounded-md px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          <div className="bg-neutral-900/60 border border-neutral-800 rounded-md px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
             <div>
               <span className="text-amber-400 font-bold text-sm block">{selectedSensor.name}</span>
               <span className="text-neutral-400">{selectedSensor.location}</span>
@@ -254,7 +249,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* PM2.5 Card */}
             <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-4 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+              <div className="flex items-center justify-between text-xs text-neutral-400">
                 <span className="flex items-center gap-1.5">
                   <Droplets className="w-4 h-4 text-neutral-400" /> Humo PM2.5
                 </span>
@@ -283,7 +278,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
 
             {/* Monóxido de Carbono (CO) */}
             <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-4 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+              <div className="flex items-center justify-between text-xs text-neutral-400">
                 <span className="flex items-center gap-1.5">
                   <Gauge className="w-4 h-4 text-amber-400" /> Monóxido (CO)
                 </span>
@@ -312,7 +307,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
 
             {/* Viento del Pacífico */}
             <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-4 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+              <div className="flex items-center justify-between text-xs text-neutral-400">
                 <span className="flex items-center gap-1.5">
                   <Wind className="w-4 h-4 text-neutral-400" /> Viento del Pacífico
                 </span>
@@ -337,7 +332,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
 
             {/* Temperatura y Humedad */}
             <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-4 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+              <div className="flex items-center justify-between text-xs text-neutral-400">
                 <span className="flex items-center gap-1.5">
                   <Thermometer className="w-4 h-4 text-red-400" /> Temp & Humedad
                 </span>
@@ -348,13 +343,13 @@ export const SensorsMetricsDashboard: React.FC = () => {
                   <span className="text-3xl font-extrabold font-mono text-amber-400">
                     {selectedSensor.temp}°C
                   </span>
-                  <span className="text-neutral-400 font-mono text-sm">/ {selectedSensor.humidity}% HR</span>
+                  <span className="text-neutral-400 text-sm">/ {selectedSensor.humidity}% HR</span>
                 </div>
                 <div className="text-xs mt-1 text-neutral-300 font-sans">
                   {selectedSensor.humidity < 25 ? 'Condición de desecación crítica de pasto.' : 'Humedad ambiental estable.'}
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 bg-neutral-950 p-1.5 rounded border border-neutral-800">
+              <div className="flex items-center justify-between text-[11px] text-neutral-400 bg-neutral-950 p-1.5 rounded border border-neutral-800">
                 <span>Sensor de Llama:</span>
                 <strong className={selectedSensor.flame ? 'text-red-400' : 'text-emerald-500'}>
                   {selectedSensor.flame ? '🔥 DETECTADA' : 'INACTIVA'}
@@ -369,12 +364,12 @@ export const SensorsMetricsDashboard: React.FC = () => {
             <div className="lg:col-span-5 bg-neutral-900/90 border border-neutral-800 rounded-lg p-4 shadow-sm space-y-3">
               <div className="flex items-center gap-2 pb-2 border-b border-neutral-800">
                 <Cpu className="w-4 h-4 text-amber-400" />
-                <h3 className="font-bold text-sm text-neutral-100 font-mono">
+                <h3 className="font-bold text-sm text-neutral-100">
                   Inyectar Lectura Manual a Esta Estación
                 </h3>
               </div>
 
-              <div className="space-y-3 text-xs font-mono">
+              <div className="space-y-3 text-xs">
                 <div>
                   <div className="flex justify-between mb-1">
                     <span className="text-neutral-400">PM2.5 a Enviar:</span>
@@ -437,7 +432,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
               <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
                 <div className="flex items-center gap-2">
                   <Code2 className="w-4 h-4 text-neutral-400" />
-                  <h3 className="font-bold text-sm text-neutral-100 font-mono">
+                  <h3 className="font-bold text-sm text-neutral-100">
                     Conectar Sensor Físico (ESP32 / Arduino / LoRaWAN)
                   </h3>
                 </div>
@@ -448,7 +443,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
                       'hw_snippet'
                     )
                   }
-                  className="flex items-center gap-1 text-[11px] text-neutral-400 hover:text-white font-mono bg-neutral-950 px-2 py-1 rounded border border-neutral-800"
+                  className="flex items-center gap-1 text-[11px] text-neutral-400 hover:text-white bg-neutral-950 px-2 py-1 rounded border border-neutral-800"
                 >
                   {copiedKey === 'hw_snippet' ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                   <span>Copiar Código</span>
@@ -464,7 +459,7 @@ export const SensorsMetricsDashboard: React.FC = () => {
                 </pre>
               </div>
 
-              <div className="text-[11px] font-mono text-neutral-400 flex items-center justify-between pt-1 border-t border-neutral-800">
+              <div className="text-[11px] text-neutral-400 flex items-center justify-between pt-1 border-t border-neutral-800">
                 <span>Endpoint: <strong>POST /api/sensors/ingest</strong></span>
                 <span className="text-emerald-500 font-bold">Retransmisión a /stream en &lt; 15 ms</span>
               </div>

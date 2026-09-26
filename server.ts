@@ -887,7 +887,6 @@ app.post('/api/alerts/evaluate-ai', (req: Request, res: Response) => {
   const {
     sector = 'Ladera de Cali',
     frp = 35.0,
-    pm25 = 95.0,
     co = 5.0,
     windSpeed = 22.0,
     windDirection = 'WNW',

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IoTSensorNode } from '../types/fire';
-import { Activity, Wind, Thermometer, Droplets, Gauge, AlertTriangle, ShieldCheck, Battery, RefreshCw, Zap } from 'lucide-react';
+import { Activity, Wind, AlertTriangle, ShieldCheck, Battery, Zap } from 'lucide-react';
 
 interface IoTTelemetryPanelProps {
   sensors: IoTSensorNode[];
@@ -33,7 +33,7 @@ export const IoTTelemetryPanel: React.FC<IoTTelemetryPanelProps> = ({
             <Activity className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-semibold text-sm text-neutral-100 uppercase tracking-wide font-mono">
+            <h3 className="font-semibold text-sm text-neutral-100 uppercase tracking-wide">
               Red IoT Cali & Valle
             </h3>
             <p className="text-xs text-neutral-400">
@@ -46,7 +46,7 @@ export const IoTTelemetryPanel: React.FC<IoTTelemetryPanelProps> = ({
           <button
             onClick={handleSimulateBurst}
             disabled={isSimulatingBurst}
-            className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded font-mono border transition ${
+            className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded border transition ${
               simulatedOffset > 0
                 ? 'bg-amber-950 text-amber-400 border-amber-700'
                 : 'bg-neutral-800 text-neutral-300 border-neutral-700 hover:text-white'
@@ -74,11 +74,15 @@ export const IoTTelemetryPanel: React.FC<IoTTelemetryPanelProps> = ({
           const livePm25 = sensor.metrics.pm25 + (isCritical || isElevated ? simulatedOffset : Math.floor(simulatedOffset / 4));
           const liveWindSpeed = sensor.metrics.windSpeedKmh + (simulatedOffset > 0 ? 8 : 0);
 
+          // La fila entera es el control de selección: botón real para que sea
+          // operable con teclado (Enter/Espacio) y anuncie su estado con aria-pressed.
           return (
-            <div
+            <button
+              type="button"
               key={sensor.id}
               onClick={() => onSelectSensor?.(sensor)}
-              className={`p-3.5 rounded-md border transition cursor-pointer ${
+              aria-pressed={isSelected}
+              className={`w-full text-left p-3.5 rounded-md border transition cursor-pointer ${
                 isSelected
                   ? 'border-amber-500/80 bg-neutral-800/90 shadow-sm ring-1 ring-amber-500/50'
                   : isCritical
@@ -120,7 +124,7 @@ export const IoTTelemetryPanel: React.FC<IoTTelemetryPanelProps> = ({
               <div className="grid grid-cols-4 gap-2 mt-3 text-center">
                 {/* PM2.5 Smoke */}
                 <div className="bg-neutral-900/80 p-2 rounded-lg border border-neutral-800">
-                  <div className="text-[10px] uppercase font-mono text-neutral-400">PM2.5 Humo</div>
+                  <div className="text-[10px] uppercase text-neutral-400">PM2.5 Humo</div>
                   <div className={`text-base font-bold font-mono ${livePm25 > 50 ? 'text-red-400' : 'text-neutral-100'}`}>
                     {livePm25}
                   </div>
@@ -129,7 +133,7 @@ export const IoTTelemetryPanel: React.FC<IoTTelemetryPanelProps> = ({
 
                 {/* CO ppm */}
                 <div className="bg-neutral-900/80 p-2 rounded-lg border border-neutral-800">
-                  <div className="text-[10px] uppercase font-mono text-neutral-400">Monóxido CO</div>
+                  <div className="text-[10px] uppercase text-neutral-400">Monóxido CO</div>
                   <div className={`text-base font-bold font-mono ${sensor.metrics.coPpm > 10 ? 'text-red-400' : 'text-neutral-100'}`}>
                     {sensor.metrics.coPpm}
                   </div>
@@ -138,18 +142,18 @@ export const IoTTelemetryPanel: React.FC<IoTTelemetryPanelProps> = ({
 
                 {/* Temp / Hum */}
                 <div className="bg-neutral-900/80 p-2 rounded-lg border border-neutral-800">
-                  <div className="text-[10px] uppercase font-mono text-neutral-400">Temp / Hum</div>
+                  <div className="text-[10px] uppercase text-neutral-400">Temp / Hum</div>
                   <div className="text-xs font-bold text-amber-400 font-mono mt-0.5">
                     {sensor.metrics.tempC}°C
                   </div>
-                  <div className="text-[10px] text-neutral-300 font-mono">
+                  <div className="text-[10px] text-neutral-300">
                     {sensor.metrics.humidityPercent}% RH
                   </div>
                 </div>
 
                 {/* Wind */}
                 <div className="bg-neutral-900/80 p-2 rounded-lg border border-neutral-800">
-                  <div className="text-[10px] uppercase font-mono text-neutral-400">Viento Pacífico</div>
+                  <div className="text-[10px] uppercase text-neutral-400">Viento Pacífico</div>
                   <div className="text-xs font-bold text-neutral-300 font-mono mt-0.5">
                     {liveWindSpeed} km/h
                   </div>
@@ -162,12 +166,12 @@ export const IoTTelemetryPanel: React.FC<IoTTelemetryPanelProps> = ({
 
               {/* Flame Detector status */}
               {sensor.metrics.flameDetected && (
-                <div className="mt-2.5 px-2.5 py-1 bg-red-900/40 border border-red-700/60 rounded text-[11px] text-red-300 flex items-center gap-1.5 font-mono">
+                <div className="mt-2.5 px-2.5 py-1 bg-red-900/40 border border-red-700/60 rounded text-[11px] text-red-300 flex items-center gap-1.5">
                   <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
                   <span>¡SENSOR INFRARROJO / LLAMA DIRECTA DETECTADA EN LADERA!</span>
                 </div>
               )}
-            </div>
+            </button>
           );
         })}
       </div>

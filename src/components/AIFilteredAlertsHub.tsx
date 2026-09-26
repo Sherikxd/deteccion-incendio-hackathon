@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { FireEmergencyAlert, AIDecisionMeta } from '../types/fire';
+import { FireEmergencyAlert } from '../types/fire';
 import {
   Brain,
   ShieldCheck,
   Flame,
-  AlertTriangle,
   CheckCircle2,
-  XCircle,
   Filter,
   DollarSign,
-  TrendingDown,
   Sparkles,
   RefreshCw,
-  Send,
   Code2,
   Copy,
   Check,
@@ -20,8 +16,6 @@ import {
   ChevronUp,
   Cpu,
   Eye,
-  Layers,
-  ArrowRight
 } from 'lucide-react';
 import { copyTextToClipboard } from '../utils/copyToClipboard';
 
@@ -122,10 +116,10 @@ export const AIFilteredAlertsHub: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold font-mono text-white">
+                <h2 className="text-lg font-bold text-white">
                   MOTOR DE DECISIÓN & ALERTAS FILTRADAS POR IA
                 </h2>
-                <span className="text-[10px] font-mono bg-neutral-500/20 text-neutral-300 border border-neutral-500/30 px-2.5 py-0.5 rounded font-semibold flex items-center gap-1.5">
+                <span className="text-[10px] bg-neutral-500/20 text-neutral-300 border border-neutral-500/30 px-2.5 py-0.5 rounded font-semibold flex items-center gap-1.5">
                   <Sparkles className="w-3 h-3 text-neutral-300" />
                   <span>Razonamiento Táctico Regional</span>
                 </span>
@@ -138,7 +132,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
 
           <button
             onClick={() => fetchAlerts(activeFilter)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono border border-neutral-700 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs border border-neutral-700 transition"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Refrescar Análisis</span>
@@ -146,7 +140,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
         </div>
 
         {/* Decision Summary Stat Badges */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 text-xs font-mono">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 text-xs">
           <div className="bg-neutral-950 p-3 rounded-md border border-red-900/50 flex flex-col justify-between">
             <span className="text-neutral-400 text-[11px] flex items-center gap-1">
               <Flame className="w-3.5 h-3.5 text-red-400" /> Despachos Confirmados
@@ -189,7 +183,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
         </div>
 
         {/* Filter Pills */}
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-mono">
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
           <span className="text-neutral-400 text-[11px] flex items-center gap-1">
             <Filter className="w-3 h-3 text-neutral-400" /> Filtrar Decisiones:
           </span>
@@ -247,7 +241,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column: Filtered Alerts List (7 cols) */}
         <div className="lg:col-span-7 space-y-3">
-          <div className="flex items-center justify-between text-xs font-mono text-neutral-400 px-1">
+          <div className="flex items-center justify-between text-xs text-neutral-400 px-1">
             <span>Alertas Analizadas por el Modelo de Razonamiento ({alerts.length})</span>
             <span className="text-[11px] text-neutral-400">Endpoint: GET /api/alerts?decision={activeFilter}</span>
           </div>
@@ -258,7 +252,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
               <span>Cargando decisiones de IA...</span>
             </div>
           ) : alerts.length === 0 ? (
-            <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-8 text-center text-neutral-400 text-xs font-mono">
+            <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-8 text-center text-neutral-400 text-xs">
               No hay alertas que coincidan con el filtro seleccionado.
             </div>
           ) : (
@@ -284,17 +278,17 @@ export const AIFilteredAlertsHub: React.FC = () => {
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         {isConfirmed && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-600 text-white flex items-center gap-1 shadow">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white flex items-center gap-1 shadow">
                             <Flame className="w-3 h-3" /> DESPACHO CONFIRMADO POR IA ({alert.aiDecision?.confidence}%)
                           </span>
                         )}
                         {isDiscarded && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-600 text-white flex items-center gap-1 shadow">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white flex items-center gap-1 shadow">
                             <ShieldCheck className="w-3 h-3" /> FALSO POSITIVO DESCARTADO ({alert.aiDecision?.confidence}%)
                           </span>
                         )}
                         {isMonitored && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-600 text-white flex items-center gap-1 shadow">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-600 text-white flex items-center gap-1 shadow">
                             <Eye className="w-3 h-3" /> MONITOREO PREVENTIVO ({alert.aiDecision?.confidence}%)
                           </span>
                         )}
@@ -315,7 +309,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
                     </div>
 
                     {/* Quick Metrics Strip */}
-                    <div className="flex flex-wrap items-center gap-3 pt-2 text-[11px] font-mono text-neutral-400 border-t border-neutral-800/80">
+                    <div className="flex flex-wrap items-center gap-3 pt-2 text-[11px] text-neutral-400 border-t border-neutral-800/80">
                       <span>FRP: <strong className="text-amber-400">{alert.frpMw} MW</strong></span>
                       <span>PM2.5: <strong className="text-neutral-300">{alert.pm25UgM3} µg/m³</strong></span>
                       <span>Viento: <strong className="text-neutral-300">{alert.windSpeedKmh} km/h ({alert.windDirection})</strong></span>
@@ -330,7 +324,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
                   </div>
 
                   {/* Expand/Collapse AI Reasoning Toggle */}
-                  <div className="bg-neutral-950/80 px-4 py-2 border-t border-neutral-800/80 flex items-center justify-between text-xs font-mono">
+                  <div className="bg-neutral-950/80 px-4 py-2 border-t border-neutral-800/80 flex items-center justify-between text-xs">
                     <button
                       onClick={() => setExpandedAlertId(isExpanded ? null : alert.alertId)}
                       className="text-neutral-400 hover:text-neutral-300 flex items-center gap-1 font-semibold transition"
@@ -347,7 +341,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
 
                   {/* Expanded AI Reasoning Breakdown */}
                   {isExpanded && alert.aiDecision && (
-                    <div className="p-4 bg-neutral-950 border-t border-neutral-800 space-y-3 text-xs font-mono">
+                    <div className="p-4 bg-neutral-950 border-t border-neutral-800 space-y-3 text-xs">
                       <div>
                         <span className="text-[10px] uppercase font-semibold text-neutral-400 block mb-1">
                           Dictamen del Motor de IA:
@@ -392,7 +386,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
             <div className="flex items-center gap-2 pb-2.5 border-b border-neutral-800">
               <Cpu className="w-4 h-4 text-neutral-400" />
               <div>
-                <h3 className="font-bold text-sm text-neutral-100 font-mono">
+                <h3 className="font-bold text-sm text-neutral-100">
                   Evaluador de Focos en Tiempo Real
                 </h3>
                 <p className="text-[11px] text-neutral-400">
@@ -402,7 +396,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
             </div>
 
             {/* Input Form */}
-            <div className="space-y-3 text-xs font-mono">
+            <div className="space-y-3 text-xs">
               <div>
                 <label className="text-[10px] text-neutral-400 uppercase block mb-1">Sector o Paraje:</label>
                 <input
@@ -505,7 +499,7 @@ export const AIFilteredAlertsHub: React.FC = () => {
             {/* Evaluation Result Display */}
             {evalResult && (
               <div
-                className={`p-3.5 rounded-md border space-y-2 text-xs font-mono animate-fade-in ${
+                className={`p-3.5 rounded-md border space-y-2 text-xs animate-fade-in ${
                   evalResult.decision === 'DISPATCH_CONFIRMED'
                     ? 'bg-red-950/50 border-red-800 text-red-300'
                     : evalResult.decision === 'DISCARDED_FALSE_POSITIVE'

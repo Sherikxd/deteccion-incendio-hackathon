@@ -7,15 +7,7 @@ import {
   Check,
   CheckCheck,
   Flame,
-  Radio,
   MapPin,
-  ExternalLink,
-  ShieldAlert,
-  PhoneCall,
-  BellRing,
-  RotateCcw,
-  Sparkles,
-  Users
 } from 'lucide-react';
 
 export const WhatsAppBotDispatcher: React.FC = () => {
@@ -83,10 +75,10 @@ export const WhatsAppBotDispatcher: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base font-mono text-white">
+                <h3 className="font-bold text-base text-white">
                   Bot Automatizado de WhatsApp (Despacho Táctico Bomberos Cali)
                 </h3>
-                <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold">
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold">
                   API Meta Cloud / Twilio Ready
                 </span>
               </div>
@@ -98,7 +90,7 @@ export const WhatsAppBotDispatcher: React.FC = () => {
         </div>
 
         {/* Quick Dispatch Controls */}
-        <div className="mt-3 grid grid-cols-1 md:grid-cols-4 gap-2 text-xs font-mono">
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
           <div>
             <label className="text-[10px] text-neutral-400 uppercase block mb-1">Destinatario / Grupo:</label>
             <select
@@ -186,7 +178,7 @@ export const WhatsAppBotDispatcher: React.FC = () => {
             </div>
           </div>
 
-          <div className="text-[11px] font-mono bg-[#111b21] px-2.5 py-1 rounded text-neutral-400 border border-neutral-700">
+          <div className="text-[11px] bg-[#111b21] px-2.5 py-1 rounded text-neutral-400 border border-neutral-700">
             {messages.length} Despachos
           </div>
         </div>
@@ -203,7 +195,7 @@ export const WhatsAppBotDispatcher: React.FC = () => {
             <div key={msg.id} className="flex flex-col items-start max-w-[90%] md:max-w-[80%]">
               <div className="bg-[#005c4b] text-neutral-100 rounded-md p-3.5 shadow-sm border border-emerald-600/30 space-y-2">
                 {/* Header inside bubble */}
-                <div className="flex items-center justify-between gap-2 border-b border-emerald-600/40 pb-1.5 text-xs font-mono">
+                <div className="flex items-center justify-between gap-2 border-b border-emerald-600/40 pb-1.5 text-xs">
                   <span className="text-amber-400 font-bold flex items-center gap-1">
                     <Flame className="w-3.5 h-3.5" />
                     <span>ALERTA {msg.riskLevel} BOMBEROS CALI</span>

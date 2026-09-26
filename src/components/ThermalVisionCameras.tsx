@@ -3,20 +3,10 @@ import { ThermalCameraFeed } from '../types/fire';
 import { THERMAL_CAMERAS } from '../data/advancedSensors';
 import {
   Camera,
-  Eye,
   Flame,
-  Activity,
-  Layers,
-  Sparkles,
-  Wifi,
   Cpu,
-  AlertTriangle,
-  RotateCcw,
   CheckCircle2,
   Send,
-  Compass,
-  Zap,
-  Radio
 } from 'lucide-react';
 
 interface ThermalVisionCamerasProps {
@@ -91,10 +81,10 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base font-mono text-white">
+                <h3 className="font-bold text-base text-white">
                   Red de Cámaras Térmicas PTZ & Visión Artificial (IA Edge)
                 </h3>
-                <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold flex items-center gap-1">
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                   <span>4 Nodos In-Situ</span>
                 </span>
@@ -153,7 +143,7 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
         {/* Main Video Simulation Canvas (8 cols) */}
         <div className="lg:col-span-8 bg-neutral-950 rounded-lg border border-neutral-800 overflow-hidden shadow-sm flex flex-col">
           {/* Top Video Header */}
-          <div className="bg-neutral-900/90 px-4 py-2 border-b border-neutral-800 flex items-center justify-between text-xs font-mono">
+          <div className="bg-neutral-900/90 px-4 py-2 border-b border-neutral-800 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
               <span className="text-red-400 font-bold flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
@@ -238,7 +228,7 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
             </div>
 
             {/* On-Screen Telemetry HUD */}
-            <div className="absolute bottom-3 left-3 bg-neutral-950 p-2 rounded-lg border border-neutral-800 text-[11px] font-mono space-y-0.5">
+            <div className="absolute bottom-3 left-3 bg-neutral-950 p-2 rounded-lg border border-neutral-800 text-[11px] space-y-0.5">
               <div className="text-neutral-300 font-bold">
                 CAM: {activeCamera.name.split('—')[0]} • ELEV: {activeCamera.elevationM}m
               </div>
@@ -257,12 +247,12 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
           <div>
             <div className="flex items-center gap-2 pb-2.5 border-b border-neutral-800">
               <Cpu className="w-4 h-4 text-emerald-500" />
-              <h4 className="font-bold text-sm text-neutral-100 font-mono">
+              <h4 className="font-bold text-sm text-neutral-100">
                 Diagnóstico de Visión Artificial
               </h4>
             </div>
 
-            <div className="mt-3 space-y-2 text-xs font-mono">
+            <div className="mt-3 space-y-2 text-xs">
               <div className="flex justify-between p-2 rounded bg-neutral-950 border border-neutral-800">
                 <span className="text-neutral-400">Modelo Inferencia:</span>
                 <span className="text-neutral-300 font-bold">YOLOv8-Wildfire Edge</span>
@@ -286,7 +276,7 @@ export const ThermalVisionCameras: React.FC<ThermalVisionCamerasProps> = ({ onTr
 
             {/* Detection List */}
             <div className="mt-3 space-y-1.5">
-              <div className="text-[11px] font-mono text-neutral-400 uppercase font-semibold">
+              <div className="text-[11px] text-neutral-400 uppercase font-semibold">
                 Foco Detectado en Cuadro:
               </div>
               {activeCamera.detections.map((det) => (

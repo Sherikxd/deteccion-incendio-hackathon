@@ -11,9 +11,6 @@ import {
   Compass,
   MapPin,
   Crosshair,
-  ZoomIn,
-  ZoomOut,
-  Mountain,
   Satellite,
   Camera
 } from 'lucide-react';
@@ -255,7 +252,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                     <path d="m16 4-8 8"/>
                   </svg>
                 </div>
-                <div class="mt-1 px-1.5 py-0.5 rounded bg-neutral-950 text-[9px] font-mono font-bold text-neutral-200 border border-neutral-700 shadow whitespace-nowrap">
+                <div class="mt-1 px-1.5 py-0.5 rounded bg-neutral-950 text-[9px] font-bold text-neutral-200 border border-neutral-700 shadow whitespace-nowrap">
                   GOES-16: ${goes.firePowerMW} MW
                 </div>
               </div>
@@ -288,7 +285,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                     <circle cx="12" cy="13" r="3"/>
                   </svg>
                 </div>
-                <div class="mt-1 px-1.5 py-0.5 rounded bg-neutral-900 text-[9px] font-mono font-bold text-amber-400 border border-neutral-700 shadow whitespace-nowrap">
+                <div class="mt-1 px-1.5 py-0.5 rounded bg-neutral-900 text-[9px] font-bold text-amber-400 border border-neutral-700 shadow whitespace-nowrap">
                   ${cam.name.split('—')[0]} (${cam.maxTempC}°C)
                 </div>
               </div>
@@ -442,7 +439,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
         {/* Valle del Cauca Quick Sector Navigator Bar — scroll horizontal en móvil */}
         <div className="pointer-events-auto flex items-center gap-1.5 bg-neutral-900 px-2.5 py-1.5 rounded-lg border border-neutral-800 text-[11px] text-neutral-300 shadow-sm flex-nowrap overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible sm:self-start">
-          <span className="text-amber-400 font-mono font-semibold flex items-center gap-1 mr-1 shrink-0">
+          <span className="text-amber-400 font-semibold flex items-center gap-1 mr-1 shrink-0">
             <MapPin className="w-3 h-3" /> Sectores Cali:
           </span>
           {CALI_LANDMARKS.map((landmark) => (
@@ -464,7 +461,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             <Compass className="w-3.5 h-3.5 text-amber-400" />
             <span>Simbología Operativa</span>
           </div>
-          <span className="text-[10px] text-amber-400 font-mono bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30">
+          <span className="text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30">
             Valle del Cauca
           </span>
         </div>
@@ -518,7 +515,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           </div>
 
           {selectedElement.type === 'hotspot' ? (
-            <div className="mt-3 space-y-2 font-mono">
+            <div className="mt-3 space-y-2">
               <div className="flex justify-between py-0.5 border-b border-neutral-800/60">
                 <span className="text-neutral-400">Sensor/Satélite:</span>
                 <span className="text-white font-semibold">{selectedElement.data.instrument} ({selectedElement.data.satellite})</span>
@@ -545,7 +542,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               </div>
             </div>
           ) : (
-            <div className="mt-3 space-y-2 font-mono">
+            <div className="mt-3 space-y-2">
               <div className="font-semibold text-neutral-100 text-sm mb-1">{selectedElement.data.name}</div>
               <div className="text-[11px] text-neutral-400 mb-2">{selectedElement.data.locationName} (Alt: {selectedElement.data.elevationM} msnm)</div>
               

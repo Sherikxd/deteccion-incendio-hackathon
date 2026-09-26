@@ -3,19 +3,13 @@ import {
   FlaskConical,
   Flame,
   CheckCircle2,
-  AlertTriangle,
   RotateCcw,
-  Sparkles,
   Send,
   MessageSquare,
   Activity,
-  Droplets,
-  Wind,
-  Layers,
   Terminal,
   Play,
   Cpu,
-  Radio
 } from 'lucide-react';
 
 export const SandboxTestingPanel: React.FC = () => {
@@ -76,7 +70,7 @@ export const SandboxTestingPanel: React.FC = () => {
         body: JSON.stringify({ scenario: scenarioKey })
       });
 
-      const data = await res.json();
+      await res.json();
       setToastMessage(`¡Escenario ejecutado: ${scenarioName}!`);
       setTimeout(() => setToastMessage(null), 4000);
     } catch (e: any) {
@@ -98,10 +92,10 @@ export const SandboxTestingPanel: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold font-mono text-white">
+                <h2 className="text-lg font-bold text-white">
                   BANCO DE PRUEBAS & DATOS SIMULADOS (SANDBOX)
                 </h2>
-                <span className="text-[10px] font-mono bg-neutral-500/20 text-neutral-300 border border-neutral-500/30 px-2.5 py-0.5 rounded font-semibold">
+                <span className="text-[10px] bg-neutral-500/20 text-neutral-300 border border-neutral-500/30 px-2.5 py-0.5 rounded font-semibold">
                   Ambiente Seguro de Pruebas
                 </span>
               </div>
@@ -114,7 +108,7 @@ export const SandboxTestingPanel: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => handleRunSimulation('RESET_NORMAL', 'Restablecer Todo a Normal')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 text-emerald-400 text-xs font-mono border border-emerald-800 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 text-emerald-400 text-xs border border-emerald-800 transition"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Restablecer Todo a Normal</span>
@@ -123,7 +117,7 @@ export const SandboxTestingPanel: React.FC = () => {
         </div>
 
         {/* 4 Interactive Test Scenario Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 text-xs font-mono">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 text-xs">
           {/* Scenario 1: Incendio Crítico Tres Cruces */}
           <div className="bg-neutral-950 p-4 rounded-md border border-red-900/60 hover:border-red-600 transition flex flex-col justify-between space-y-3">
             <div>
@@ -247,11 +241,11 @@ export const SandboxTestingPanel: React.FC = () => {
         <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
           <div className="flex items-center gap-2">
             <Terminal className="w-4 h-4 text-neutral-400" />
-            <h3 className="font-bold text-sm text-neutral-100 font-mono">
+            <h3 className="font-bold text-sm text-neutral-100">
               Monitor en Vivo de Tramas SSE (`/stream`)
             </h3>
           </div>
-          <span className="text-[10px] font-mono bg-neutral-950 px-2 py-0.5 rounded text-neutral-400 border border-neutral-800">
+          <span className="text-[10px] bg-neutral-950 px-2 py-0.5 rounded text-neutral-400 border border-neutral-800">
             Escuchando canal unificado en tiempo real
           </span>
         </div>
